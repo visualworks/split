@@ -1,0 +1,19 @@
+{
+  "name": "zirix.com.br",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "start-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/henriquemattos/systemsat.git"
+  },
+  "author": "Visual Works",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/henriquemattos/systemsat/issues"
+  },
+  "homepage": "https://github.com/henriquemattos/systemsat#readme"
+}
