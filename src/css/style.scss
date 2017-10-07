@@ -1,0 +1,31 @@
+$fa-font-path: "node_modules/font-awesome/fonts";
+@import "node_modules/font-awesome/css/font-awesome";
+
+@import "node_modules/bulma/sass/utilities/initial-variables";
+@import "node_modules/bulma/sass/elements/icon";
+@import "node_modules/bulma/bulma";
+@import "node_modules/bulma/sass/components/_all";
+
+.navbar-brand .navbar-item img.logo {
+    height: 58px;
+    max-height: 58px;
+    margin-right: 30px;
+    width: auto;
+    max-width: auto;
+}
+
+#map {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+}
+
+#overlayer-map {
+    height: auto;
+    margin-left: 20px;
+    margin-top: 20px;
+    position: absolute;
+    width: 70%;
+    z-index: 2;
+}
