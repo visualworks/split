@@ -1,11 +1,12 @@
 const path = require("path");
 const webpack = require("webpack");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 
 module.exports = {
-    entry: "./src/app.js",
+    entry: "./src/index.js",
     output: {
         path: path.resolve(__dirname, "dist/"),
-        filename: "app.js"
+        filename: "index.js"
     },
     devtool: "cheap-module-source-map",
     plugins: [
@@ -13,15 +14,19 @@ module.exports = {
         "process.env": {
           "NODE_ENV": JSON.stringify("production")
         }
-      })
+      }),
+      new UglifyJsPlugin(),
     ],
+    resolve: {
+        modules: [path.resolve('./src'), 'node_modules']
+    },
     module: {
         loaders: [{
             test: /\.js$/,
             exclude: /node_modules/,
             loader: "babel-loader",
             query: {
-                presets: ["react", "env"]
+                presets: ["react"]
             }
         }, {
             test: /\.(css|scss|sass)$/,
@@ -29,7 +34,7 @@ module.exports = {
             loader: ["style-loader", "css-loader", "sass-loader"]
         }, {
             test: /\.(jpe|jpg|woff|woff2|eot|ttf|svg)(\?.*$|$)/,
-            loader: ["file-loader?name=/fonts/[name].[ext]"]
+            loader: ["file-loader?./fonts/[name].[ext]"]
         }]
     }
 };

@@ -1,3 +1,11 @@
+.eslint
+.jshintrc
+.vscode
+dist/*
+Dockerfile
+LICENSE
+package-lock.json
+
 # Logs
 logs
 *.log
