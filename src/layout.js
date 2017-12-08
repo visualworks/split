@@ -27,7 +27,8 @@ export default class Layout extends App {
     }
     authenticateUser(username, password) {
         // Call API for authentication
-        if (username === "######" && password === "######"){
+        if (username === "#######" && password === "#########"){
+            this.getClientList();
             return 1;
         } else {
             alert("Usuário ou senha inválidos.");
@@ -113,7 +114,7 @@ export default class Layout extends App {
         this.getVehiclesInRoute(this.state.selectedLineId, this.state.selectedRouteId);
     }
     componentDidMount() {
-        this.getClientList();
+        // this.getClientList();
     }
     render() {
         return (

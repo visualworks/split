@@ -46,7 +46,7 @@ export default class Header extends App {
                 <p className="control">
                     <a href="javascript:void(null)" onClick={(event) => {this.doLogout(event)}} className={(this.props.userId) ? "button is-danger" : "button is-success"}>
                     <span className="icon">
-                        <i className="fa fa-bus"></i>
+                        <i className="fa fa-unlock"></i>
                     </span>
                     <span>{(this.props.userId) ? "Sair" : "Entrar"}</span>
                     </a>
