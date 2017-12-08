@@ -217,9 +217,9 @@ export default class App extends Component {
                 }
                 throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
             }).then((json) => {
-                if (json.ListaVeiculosTrajetoResult && json.ListaVeiculosTrajetoResult.hasOwnProperty("WSVeiculosTrajeto")) {
-                    if (json.ListaVeiculosTrajetoResult.WSVeiculosTrajeto.VeiculosProximos.hasOwnProperty("WSVeiculo")) {
-                        vehiclesInRoute = json.ListaVeiculosTrajetoResult.WSVeiculosTrajeto.VeiculosProximos.WSVeiculo;
+                if (json.ListaVeiculosEmViagemResult && json.ListaVeiculosEmViagemResult.hasOwnProperty("WSVeiculosViagem")) {
+                    if (json.ListaVeiculosEmViagemResult.WSVeiculosViagem.Veiculos.hasOwnProperty("WSVeiculo")) {
+                        vehiclesInRoute = json.ListaVeiculosEmViagemResult.WSVeiculosViagem.Veiculos.WSVeiculo;
                         if (vehiclesInRoute.length > 0) {
                             let intervalID = setInterval(() => {
                                 this.getVehiclesInRoute(this.state.selectedLineId, this.state.selectedRouteId);

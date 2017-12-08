@@ -1,12 +1,14 @@
 {
-    "SOAP_URL": "https://www.portaljal.com.br/soap.php",
+    "SOAP_URL": "http://www.portaljal.com.br/soap.php",
     "SOAP_OPERATOR": "op",
     "COL_CLIENT_PER_USER": "listaClientesPorUsuario",
     "COL_LINES_PER_CLIENT": "listaLinhasCliente",
     "COL_VEHICLES_GARAGE": "listaVeiculoGaragem",
     "COL_ROUTES_PER_LINE": "listaRotasLinha",
     "COL_REFERENCE_POINTS": "listaPontosReferenciaRota",
-    "COL_VEHICLES_ROUTE": "listaVeiculosTrajeto",
+    "COL_VEHICLES_ROUTE": "listaVeiculosEmViagem",
     "RESPONSE_NOT_OK": "WebService response was not ok!",
-    "RESPONSE_DATA_CHANGED": "WebService changed the response data structure"
+    "RESPONSE_DATA_CHANGED": "WebService changed the response data structure",
+    "GLOBALBUS_USER": "##########",
+    "GLOBALBUS_PASS": "##########"
 }

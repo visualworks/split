@@ -13,8 +13,8 @@ class WebService {
   protected $url = "http://ws.globalbus.com.br/wservice.asmx?wsdl";
   protected $method = "POST";
   protected $encoding = "UTF-8";
-  protected $usuario = "#########";
-  protected $senha = "##########";
+  protected $usuario = "##########";
+  protected $senha = "###########";
   
   public function __construct(){
     if(isset($_GET["op"])){
@@ -131,6 +131,26 @@ class WebService {
     echo json_encode($response);
     die();
   }
+  public function listaVeiculosEmViagem(){
+    if ((isset($_GET["linha"]) && $_GET["linha"] > 0) && (isset($_GET["routeId"]) && $_GET["routeId"] > 0)) {
+      $client = $this->_getSoapClient();
+      $response = $client->ListaVeiculosEmViagem(
+        array(
+          "Id_Config" => 2,
+          "Id_Linha"  => $_GET["linha"],
+          "Id_Rota"   => $_GET["routeId"]
+        )
+      );
+      echo json_encode($response);
+    } else {
+      echo json_encode(
+        array(
+          "result" => "ID da Rota ou Linha não fornecida."
+        )
+      );
+    }
+    die();
+  }
   public function listaVeiculosTrajeto(){
     if ((isset($_GET["linha"]) && $_GET["linha"] > 0) && (isset($_GET["routeId"]) && $_GET["routeId"] > 0)) {
       $client = $this->_getSoapClient();
@@ -149,7 +169,7 @@ class WebService {
     } else {
       echo json_encode(
         array(
-          "result" => "ID da Rota não fornecida."
+          "result" => "ID da Rota ou Linha não fornecida."
         )
       );
     }

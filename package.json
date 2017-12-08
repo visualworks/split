@@ -20,7 +20,7 @@
   "homepage": "https://github.com/henriquemattos/systemsat#readme",
   "dependencies": {
     "bulma": "^0.6.1",
-    "google-map-react": "^0.24.0",
+    "google-map-react": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "webpack": "^3.10.0"
