@@ -16,12 +16,35 @@ export default class Layout extends App {
         this.getRoutes = this.getRoutes.bind(this);
         this.executeSearch = this.executeSearch.bind(this);
         this.locateVehicleGarage = this.locateVehicleGarage.bind(this);
+        this.doLogin = this.doLogin.bind(this);
+        this.doLogout = this.doLogout.bind(this);
     }
     setClient(event, clientId, clientName) {
         event.preventDefault();
         if (clientId) {
             this.getLinesPerClient(clientId, clientName)
         }
+    }
+    authenticateUser(username, password) {
+        // Call API for authentication
+        if (username === "######" && password === "######"){
+            return 1;
+        } else {
+            alert("Usuário ou senha inválidos.");
+        }
+        return undefined;
+    }
+    doLogin(event, username, password) {
+        event.preventDefault();
+        let userId = this.authenticateUser(username, password);
+        this.setState({
+            userId: userId
+        });
+    }
+    doLogout(event) {
+        event.preventDefault();
+        this.unsetVehiclesGarage();
+        this.resetDefaultState();
     }
     showVehiclesGarage(event) {
         event.preventDefault();
@@ -95,7 +118,7 @@ export default class Layout extends App {
     render() {
         return (
             <div className="layout">
-                <Header clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
+                <Header userId={this.state.userId} userName={this.state.userName} doLogin={this.doLogin} doLogout={this.doLogout} clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
                 <Content mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
                 <Modal showVehiclesGarage={this.state.showVehiclesGarage} hideVehiclesGarage={this.hideVehiclesGarage} locateVehicleGarage={this.locateVehicleGarage} vehiclesGarageList={this.state.vehiclesGarageList} />
             </div>

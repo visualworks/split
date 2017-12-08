@@ -5,6 +5,7 @@ export default class App extends Component {
         super(props);
         this.state = {
             clientId: 0,
+            userId: undefined,
             clientName: "Escolha um cliente",
             clientList: [],
             linesList: [],
@@ -244,5 +245,30 @@ export default class App extends Component {
     }
     getMapAccessKeys() {
         return this.state.mapAccessKey;
+    }
+    resetDefaultState() {
+        this.setState({
+            clientId: 0,
+            userId: undefined,
+            clientName: "Escolha um cliente",
+            clientList: [],
+            linesList: [],
+            selectedLineId: 0,
+            routesList: [],
+            selectedRouteId: 0,
+            referencePointsList: [],
+            vehiclesInRoute: [],
+            mapCenter: {lat: -22.79575, lng: -43.36342},
+            mapZoom: 16,
+            defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
+            defaultMapZoom: 16,
+            mapAccessKey: {
+                key: "AIzaSyCMfQ6a_eX4SwWbyfUqEVCdXYnovZfg9fk"
+            },
+            vehiclesGarageList: [],
+            showVehiclesGarage: false,
+            intervalID: 0,
+            CONST_MAPPINGS: require("const.json")
+        });
     }
 }
