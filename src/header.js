@@ -22,8 +22,9 @@ export default class Header extends App {
                 dropdown.push(<a key={index} href={"#" + client.Nome} className="navbar-item" onClick={(event) => { this.setClient(event, client.Id_Cliente, client.Nome)}}>{client.Nome}</a>)
             });
         }
+        const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={(event) => {this.showVehiclesGarage(event)}} className="navbar-item">Veículos na Garagem</a>;
         let loggedInMenu = <div className="navbar-end">
-            <a href="#veiculos-garagem" onClick={(event) => {this.showVehiclesGarage(event)}} className="navbar-item">Veículos na Garagem</a>
+            {btnVeiculosGaragem}
             <div className="navbar-item has-dropdown is-hoverable">
                 <a className="navbar-link" href="javascript:void(null)">
                     Clientes
@@ -54,6 +55,7 @@ export default class Header extends App {
             </div>
         </div>;
         let loggedOutMenu = <div className="navbar-end">
+            {btnVeiculosGaragem}
             <div className="navbar-item">
                 <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" />
             </div>
