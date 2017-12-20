@@ -6,12 +6,8 @@ $fa-font-path: "node_modules/font-awesome/fonts";
 @import "node_modules/bulma/bulma";
 @import "node_modules/bulma/sass/components/_all";
 
-.navbar-brand .navbar-item img.logo {
-    height: 58px;
-    max-height: 58px;
+.navbar-brand .navbar-item img.logo:first-child {
     margin-right: 30px;
-    width: auto;
-    max-width: auto;
 }
 
 #map {
