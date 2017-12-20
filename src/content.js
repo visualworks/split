@@ -25,7 +25,7 @@ export default class Content extends App {
             });
         }
         const VehiclesInRouteMarker = ({text}) => {
-            return (<a className="button is-medium is-primary" title={text}><span classNme="icon"><i className="fa fa-bus"></i></span></a>);
+            return (<a className="button is-small is-primary" title={text}><span classNme="icon"><i className="fa fa-bus"></i></span> {text}</a>);
         };
         if (this.props.vehiclesInRoute.length > 0) {
             this.props.vehiclesInRoute.forEach((vehicleInRoute, index) => {
