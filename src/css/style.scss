@@ -23,11 +23,16 @@ $fa-font-path: "node_modules/font-awesome/fonts";
 
 #overlayer-map {
     height: auto;
-    margin-left: 20px;
-    margin-top: 20px;
+    padding: 20px;
     position: absolute;
-    width: 70%;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
     z-index: 2;
+}
+
+#overlayer-map .field .control {
+    margin-right: 10px;
 }
 
 .icon-marker {

@@ -9,16 +9,16 @@ export default class FilterControls extends App {
         let optionLines = this.props.getLines();
         let optionRoutes = this.props.getRoutes();
         return (
-            <div className="field is-grouped">
+            <div className="field is-horizontal">
                 <div className="control">
-                    <div className="select">
+                    <div className="select is-rounded">
                         <select value={this.props.selectedLineId} onChange={(event) => { this.props.changeLines(event) }}>
                             {optionLines}
                         </select>
                     </div>
                 </div>
                 <div className="control">
-                    <div className="select">
+                    <div className="select is-rounded">
                         <select value={this.props.selectedRouteId} onChange={(event) => { this.props.changeRoutes(event) }}>
                             {optionRoutes}
                         </select>
