@@ -24,7 +24,8 @@ export default class App extends Component {
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             intervalID: 0,
-            CONST_MAPPINGS: require("const.json")
+            CONST_MAPPINGS: require("const.json"),
+            isDirectLink: false
         };
     }
     getSOAPUrl(soapCollection, soapParams) {
@@ -194,6 +195,8 @@ export default class App extends Component {
                         mapZoom: (referencePointsList.length > 10) ? this.state.defaultMapZoom - 2 : this.state.defaultMapZoom + 1
                     });
                     return referencePointsList;
+                } else {
+                    throw new Error(this.state.CONST_MAPPINGS.REFERENCE_POINTS_NOT_FOUND);
                 }
             });
         }
@@ -232,10 +235,49 @@ export default class App extends Component {
                         }
                     }
                     return vehiclesInRoute;
+                } else {
+                    throw new Error(this.state.CONST_MAPPINGS.VEHICLES_IN_ROUTE_NOT_FOUND);
                 }
             });
         }
         return vehiclesInRoute;
+    }
+    loadDirectLink() {
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        if (params.has("cliente")) {
+            this.setState({
+                clientId: params.get("cliente")
+            });
+            if (params.has("linha")) {
+                this.setState({
+                    lineId: params.get("linha")
+                });
+                if (params.has("rota")) {
+                    this.setState({
+                        routeId: params.get("rota")
+                    });
+                    try {
+                        this.getLinesPerClient(params.get("cliente"));
+                        this.getRoutesPerLine(params.get("linha"))
+                        this.getReferencePointsPerRoute(params.get("rota"));
+                        this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
+                        this.setState({
+                            isDirectLink: true
+                        });
+                    } catch (e) {
+                        alert(e);
+                        throw new Error(e);
+                    }
+                } else {
+                    alert(this.state.CONST_MAPPINGS.ID_ROUTE_NOT_FOUND);
+                    throw new Error(this.state.CONST_MAPPINGS.ID_ROUTE_NOT_FOUND);
+                }
+            } else {
+                alert(this.state.CONST_MAPPINGS.ID_LINE_NOT_FOUND);
+                throw new Error(this.state.CONST_MAPPINGS.ID_LINE_NOT_FOUND);
+            }
+        }
     }
     getDefaultMapCenter() {
         return this.state.defaultMapCenter;
@@ -268,7 +310,8 @@ export default class App extends Component {
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             intervalID: 0,
-            CONST_MAPPINGS: require("const.json")
+            CONST_MAPPINGS: require("const.json"),
+            isDirectLink: false
         });
     }
 }

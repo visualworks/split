@@ -10,5 +10,9 @@
     "RESPONSE_NOT_OK": "WebService response was not ok!",
     "RESPONSE_DATA_CHANGED": "WebService changed the response data structure",
     "GLOBALBUS_USER": "##########",
-    "GLOBALBUS_PASS": "##########"
+    "GLOBALBUS_PASS": "##########",
+    "ID_ROUTE_NOT_FOUND": "Você não especificou o ID da rota",
+    "ID_LINE_NOT_FOUND": "Você não especificou o ID da linha",
+    "VEHICLES_IN_ROUTE_NOT_FOUND": "Veículos em rota não encontrados para esta rota, linha e cliente",
+    "REFERENCE_POINTS_NOT_FOUND": "Pontos de Referência não encontrados para esta rota, linha e cliente"
 }

@@ -32,11 +32,12 @@ export default class Content extends App {
                 this.vehiclesInRoute.push(<VehiclesInRouteMarker key={index} lat={vehicleInRoute.Latitude} lng={vehicleInRoute.Longitude} text={vehicleInRoute.Descricao} />)
             });
         }
+        let filterControls = <div id="overlayer-map">
+            <FilterControls changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
+        </div>;
         return (<section className="content">
             <div id="map">
-                <div id="overlayer-map">
-                    <FilterControls changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
-                </div>
+                { this.props.isDirectLink ? '' : filterControls }
                 <GoogleMapReact 
                     bootstrapURLKeys={this.state.mapAccessKey}
                     defaultCenter={this.mapCenter}

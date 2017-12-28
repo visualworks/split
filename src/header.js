@@ -39,7 +39,7 @@ export default class Header extends App {
         let dropdown = [];
         if (this.props.clientList) {
             this.props.clientList.forEach((client, index) => {
-                dropdown.push(<a key={index} href={"#" + client.Nome} className="navbar-item" onClick={(event) => { this.setClient(event, client.Id_Cliente, client.Nome)}}>{client.Nome}</a>)
+                dropdown.push(<a key={index} href={"#" + client.Nome} className="navbar-item" onClick={(event) => { this.setClient(event, client.Id_Cliente, client.Nome)}}>{"(" + client.Id_Cliente + ") "+ client.Nome}</a>)
             });
         }
         const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={(event) => {this.showVehiclesGarage(event)}} className="navbar-item">Veículos na Garagem</a>;
@@ -59,7 +59,7 @@ export default class Header extends App {
                     <span className="icon">
                         <i className="fa fa-bus"></i>
                     </span>
-                    <span>{this.props.clientName}</span>
+                    <span>{"(" + this.props.clientId + ") " + this.props.clientName}</span>
                     </a>
                 </p>
             </div>
@@ -93,6 +93,12 @@ export default class Header extends App {
                 </p>
             </div>
         </div>;
+        let burgerMenu = <div data-target="navbar-display" ref={(btnNavBurger) => { this.btnNavBurger = btnNavBurger; }} className="burger navbar-burger" onClick={this.toggleMobileMenu}>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>;
+        let navbarDisplay = <div id="navbar-display" ref={(navBarDisplay) => { this.navBarDisplay = navBarDisplay; }} className="navbar-menu">{(this.props.userId) ? loggedInMenu : loggedOutMenu}</div>;
         let navbar = <div className="navbar" role="navigation" aria-label="main-navigation">
             <div className="container">
                 <div className="navbar-brand">
@@ -100,13 +106,9 @@ export default class Header extends App {
                         <img src="./img/logo-zirix.png" alt="Zirix Soluções em Rastreamento" title="Zirix Soluções em Rastreamento" className="logo"/>
                         <img src="./img/logo-jal.jpg" alt="Grupo JAL" title="Grupo JAL" className="logo" />
                     </a>
-                    <div data-target="navbar-display" ref={(btnNavBurger) => { this.btnNavBurger = btnNavBurger; }} className="burger navbar-burger" onClick={this.toggleMobileMenu}>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+                    { this.props.isDirectLink ? '' : burgerMenu }
                 </div>
-                <div id="navbar-display" ref={(navBarDisplay) => { this.navBarDisplay = navBarDisplay; }} className="navbar-menu">{(this.props.userId) ? loggedInMenu : loggedOutMenu}</div>
+                { this.props.isDirectLink ? '' : navbarDisplay }
             </div>
         </div>;
         return (navbar);

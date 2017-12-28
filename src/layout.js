@@ -18,6 +18,7 @@ export default class Layout extends App {
         this.locateVehicleGarage = this.locateVehicleGarage.bind(this);
         this.doLogin = this.doLogin.bind(this);
         this.doLogout = this.doLogout.bind(this);
+        this.loadDirectLink = this.loadDirectLink.bind(this);
     }
     setClient(event, clientId, clientName) {
         event.preventDefault();
@@ -84,10 +85,10 @@ export default class Layout extends App {
         let optionLines = [];
         if (this.state.linesList.length > 1) {
             this.state.linesList.forEach((line, index) => {
-                optionLines.push(<option key={index} value={line.Id_Linha}>{line.Numero} - {line.Nome}</option>);
+                optionLines.push(<option key={index} value={line.Id_Linha}>{"(" + line.Id_Linha + ") " + line.Numero} - {line.Nome}</option>);
             });
         } else if (this.state.linesList.Id_Linha) {
-            optionLines.push(<option key={0} value={this.state.linesList.Id_Linha}>{this.state.linesList.Numero} - {this.state.linesList.Nome}</option>);
+            optionLines.push(<option key={0} value={this.state.linesList.Id_Linha}>{"(" + this.state.linesList.Id_Linha + ") " + this.state.linesList.Numero} - {this.state.linesList.Nome}</option>);
         }
         return optionLines;
     }
@@ -101,10 +102,10 @@ export default class Layout extends App {
         let optionRoutes = [];
         if (this.state.routesList.length > 1) {
             this.state.routesList.forEach((route, index) => {
-                optionRoutes.push(<option key={index} value={route.Id_Rota}>{route.Nome}</option>);
+                optionRoutes.push(<option key={index} value={route.Id_Rota}>{"(" + route.Id_Rota + ") " + route.Nome}</option>);
             });
         } else if (this.state.routesList.Id_Rota) {
-            optionRoutes.push(<option key={0} value={this.state.routesList.Id_Rota}>{this.state.routesList.Nome}</option>);
+            optionRoutes.push(<option key={0} value={this.state.routesList.Id_Rota}>{"(" + this.state.routesList.Id_Rota + ") " + this.state.routesList.Nome}</option>);
         }
         return optionRoutes;
     }
@@ -114,14 +115,14 @@ export default class Layout extends App {
         this.getVehiclesInRoute(this.state.selectedLineId, this.state.selectedRouteId);
     }
     componentDidMount() {
-        // this.getClientList();
+        this.loadDirectLink()
     }
     render() {
         return (
             <div className="layout">
-                <Header userId={this.state.userId} userName={this.state.userName} doLogin={this.doLogin} doLogout={this.doLogout} clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
-                <Content mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
-                <Modal showVehiclesGarage={this.state.showVehiclesGarage} hideVehiclesGarage={this.hideVehiclesGarage} locateVehicleGarage={this.locateVehicleGarage} vehiclesGarageList={this.state.vehiclesGarageList} />
+                <Header isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName} doLogin={this.doLogin} doLogout={this.doLogout} clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
+                <Content isDirectLink={this.state.isDirectLink} mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
+                <Modal isDirectLink={this.state.isDirectLink} showVehiclesGarage={this.state.showVehiclesGarage} hideVehiclesGarage={this.hideVehiclesGarage} locateVehicleGarage={this.locateVehicleGarage} vehiclesGarageList={this.state.vehiclesGarageList} />
             </div>
         );
     }
