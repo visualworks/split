@@ -19,11 +19,11 @@
   },
   "homepage": "https://github.com/henriquemattos/systemsat#readme",
   "dependencies": {
-    "bulma": "^0.6.1",
+    "bulma": "^0.6.2",
     "google-map-react": "^0.25.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "webpack": "^3.10.0"
+    "webpack": "^3.11.0"
   },
   "devDependencies": {
     "@mapbox/point-geometry": "^0.1.0",
@@ -36,13 +36,13 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
-    "css-loader": "^0.28.7",
+    "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
     "font-awesome": "^4.7.0",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.1",
-    "uglifyjs-webpack-plugin": "^1.1.5",
-    "webpack-dev-server": "^2.9.7"
+    "uglifyjs-webpack-plugin": "^1.1.8",
+    "webpack-dev-server": "^2.11.1"
   }
 }
