@@ -5,7 +5,9 @@ export default class App extends Component {
         super(props);
         this.state = {
             clientId: 0,
-            userId: undefined,
+            userId: 0,
+            userName: "",
+            userRole: "",
             clientName: "Escolha um cliente",
             clientList: [],
             linesList: [],
@@ -23,6 +25,7 @@ export default class App extends Component {
             },
             vehiclesGarageList: [],
             showVehiclesGarage: false,
+            showUsersManagement: false,
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false
@@ -291,7 +294,9 @@ export default class App extends Component {
     resetDefaultState() {
         this.setState({
             clientId: 0,
-            userId: undefined,
+            userId: 0,
+            userName: "",
+            userRole: "",
             clientName: "Escolha um cliente",
             clientList: [],
             linesList: [],
@@ -309,6 +314,7 @@ export default class App extends Component {
             },
             vehiclesGarageList: [],
             showVehiclesGarage: false,
+            showUsersManagement: false,
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false

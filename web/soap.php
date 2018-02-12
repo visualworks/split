@@ -13,17 +13,99 @@ class WebService {
   protected $url = "http://ws.globalbus.com.br/wservice.asmx?wsdl";
   protected $method = "POST";
   protected $encoding = "UTF-8";
-  protected $usuario = "##########";
-  protected $senha = "###########";
+  protected $usuario = "";
+  protected $senha = "";
+  protected $dbhost = "mysql.visualworks.com.br";
+  protected $dbuser = "";
+  protected $dbpass = "";
   
   public function __construct(){
+    $_POST = json_decode(file_get_contents('php://input'), true);
     if(isset($_GET["op"])){
       $this->{$_GET["op"]}();
+    } else if (isset($_POST["op"]) && $_POST["op"] === "updateUser" && isset($_POST["user"]) && isset($_POST["passwd"]) && isset($_POST["rePasswd"]) && ($_POST["passwd"] === $_POST["rePasswd"]) && isset($_POST["adminUser"]) && isset($_POST["adminPasswd"])) {
+      $this->dbuser = $_POST["adminUser"];
+      $this->dbpass = $_POST["adminPasswd"];
+      $this->{$_POST["op"]}($_POST["user"], $_POST["passwd"]);
+    } else if (isset($_POST["op"]) && isset($_POST["user"]) && isset($_POST["passwd"])) {
+      $this->dbuser = $_POST["user"];
+      $this->dbpass = $_POST["passwd"];
+      $this->{$_POST["op"]}();
     } else {
       $client = $this->getSoapClient();
       echo json_encode($client);
       die();
     }
+  }
+  public function getConnection() {
+    try {
+      $dsn = 'mysql:host=' . $this->dbhost;
+      $options = array(
+          PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'
+      );
+      $output = new PDO($dsn, $this->dbuser, $this->dbpass, $options);
+    } catch (PDOException $error) {
+      $output = $error->getMessage();
+    }
+    return $output;
+  }
+  public function authenticateUser() {
+    $conn = $this->getConnection();
+    if($conn instanceof PDO) {
+      try {
+        $stmt = $conn->prepare("SELECT CURRENT_USER()");
+        $stmt->execute();
+        $current_user = $stmt->fetch(PDO::FETCH_OBJ);
+        $str_column_name = "CURRENT_USER()";
+        $stmt = $conn->prepare("SHOW GRANTS FOR CURRENT_USER()");
+        $stmt->execute();
+        $str_column_name = "Grants for {$current_user->{$str_column_name}}";
+        $result = $stmt->fetch(PDO::FETCH_OBJ);
+        $role = "";
+        if (substr($result->{$str_column_name}, 0, 14) === "GRANT USAGE ON") {
+          $role = "viewer";
+        } else if (substr($result->{$str_column_name}, 0, 17) === "GRANT CREATE USER") {
+          $role = "admin";
+        }
+        $response = array(
+          "user" => $this->dbuser,
+          "role" => $role
+        );  
+      } catch (PDOException $error) {
+        $response = array(
+          "result" => $error->getMessage()
+        );
+      }
+    } else {
+      $response = array(
+        "result" => $conn
+      );
+    }
+    echo json_encode($response);
+    die();
+  }
+  public function updateUser($user, $pass) {
+    $conn = $this->getConnection();
+    if ($conn instanceof PDO) {
+      try {
+        $stmt = $conn->prepare("ALTER USER IF EXISTS ? IDENTIFIED BY ?");
+        $params = array($user, $pass);
+        $stmt->execute($params);
+        $response = array(
+          "result" => "Usuário atualizado com sucesso."
+        );
+      } catch (PDOException $error) {
+        $response = array(
+          "result" => $error.getMessage()
+        );
+      }
+    } else {
+      $response = array(
+        "result" => $conn
+      );
+    }
+    echo json_encode($response);
+    die();
   }
   public function listaVeiculoGaragem(){
     $client = $this->_getSoapClient();

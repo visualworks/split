@@ -9,6 +9,7 @@ export default class Header extends App {
         this.showVehiclesGarage = props.showVehiclesGarage;
         this.doLogout = props.doLogout;
         this.doLogin = props.doLogin;
+        this.manageUsers = props.manageUsers;
         this._handleKeyPress = this._handleKeyPress.bind(this);
         this.toggleMobileMenu = this.toggleMobileMenu.bind(this);
     }
@@ -35,6 +36,16 @@ export default class Header extends App {
         this.btnNavBurger.className = btnClasses;
         this.navBarDisplay.className = navBarClasses;
     }
+    componentDidMount() {
+        if (this.username) {
+            this.username.focus();
+        }
+    }
+    componentDidUpdate() {
+        if (this.username) {
+            this.username.focus();
+        }
+    }
     render() {
         let dropdown = [];
         if (this.props.clientList) {
@@ -42,7 +53,29 @@ export default class Header extends App {
                 dropdown.push(<a key={index} href={"#" + client.Nome} className="navbar-item" onClick={(event) => { this.setClient(event, client.Id_Cliente, client.Nome)}}>{"(" + client.Id_Cliente + ") "+ client.Nome}</a>)
             });
         }
-        const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={(event) => {this.showVehiclesGarage(event)}} className="navbar-item">Veículos na Garagem</a>;
+        let fnVeiculosGaragem = (event) => { this.showVehiclesGarage(event) };
+        const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={ fnVeiculosGaragem } className="navbar-item">Veículos na Garagem</a>;
+        let fnDoLogout = (event) => { this.doLogout(event) };
+        let btnLogin = <div className="navbar-item">
+            <p className="control">
+                <a href="javascript:void(null)" onClick={ fnDoLogout } className={(this.props.userId) ? "button is-danger" : "button is-success"}>
+                <span className="icon">
+                    <i className="fa fa-unlock"></i>
+                </span>
+                <span>{(this.props.userId) ? this.props.userName + " (Sair)" : "Entrar"}</span>
+                </a>
+            </p>
+        </div>;
+        let fnManageUsers = (event) => { this.manageUsers(event) };
+        let btnManageUsers = <div className="navbar-item">
+            <p className="control">
+                <a href="javascript:void(null)" onClick={ fnManageUsers } className="button">
+                    <span className="icon">
+                        <i className="fa fa-users"></i>
+                    </span>
+                </a>
+            </p>
+        </div>;
         let loggedInMenu = <div className="navbar-end">
             {btnVeiculosGaragem}
             <div className="navbar-item has-dropdown is-hoverable">
@@ -63,21 +96,13 @@ export default class Header extends App {
                     </a>
                 </p>
             </div>
-            <div className="navbar-item">
-                <p className="control">
-                    <a href="javascript:void(null)" onClick={(event) => {this.doLogout(event)}} className={(this.props.userId) ? "button is-danger" : "button is-success"}>
-                    <span className="icon">
-                        <i className="fa fa-unlock"></i>
-                    </span>
-                    <span>{(this.props.userId) ? "Sair" : "Entrar"}</span>
-                    </a>
-                </p>
-            </div>
+            { btnLogin }
+            { (this.props.userRole === "admin") ? btnManageUsers : "" }
         </div>;
         let loggedOutMenu = <div className="navbar-end">
             {btnVeiculosGaragem}
             <div className="navbar-item">
-                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" />
+                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus="true" />
             </div>
             <div className="navbar-item">
                 <input ref={(password) => { this.password = password; }} onKeyPress={this._handleKeyPress} className="input" type="password" placeholder="senha" />
@@ -88,7 +113,7 @@ export default class Header extends App {
                     <span className="icon">
                         <i className="fa fa-lock"></i>
                     </span>
-                    <span>{(this.props.userId) ? "Sair" : "Entrar"}</span>
+                    <span>{(this.props.userId) ? this.props.userName + " (Sair)" : "Entrar"}</span>
                     </a>
                 </p>
             </div>

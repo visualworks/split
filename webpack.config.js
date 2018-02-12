@@ -8,7 +8,7 @@ module.exports = {
         path: path.resolve(__dirname, "dist/"),
         filename: "index.js"
     },
-    devtool: "cheap-module-source-map",
+    devtool: "cheap-module-source-map", // "eval-source-map", // 
     plugins: [
       new webpack.DefinePlugin({
         "process.env": {

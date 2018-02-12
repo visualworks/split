@@ -3,6 +3,8 @@ import App from "app";
 import Header from "header";
 import Content from "content";
 import Modal from "modal";
+import Dialog from "dialog";
+import Auth from "auth";
 
 export default class Layout extends App {
     constructor(props) {
@@ -18,7 +20,10 @@ export default class Layout extends App {
         this.locateVehicleGarage = this.locateVehicleGarage.bind(this);
         this.doLogin = this.doLogin.bind(this);
         this.doLogout = this.doLogout.bind(this);
+        this.manageUsers = this.manageUsers.bind(this);
         this.loadDirectLink = this.loadDirectLink.bind(this);
+        this.onCloseDialog = this.onCloseDialog.bind(this);
+        this.onSubmitForm = this.onSubmitForm.bind(this);
     }
     setClient(event, clientId, clientName) {
         event.preventDefault();
@@ -26,27 +31,68 @@ export default class Layout extends App {
             this.getLinesPerClient(clientId, clientName)
         }
     }
-    authenticateUser(username, password) {
-        // Call API for authentication
-        if (username === "#######" && password === "#########"){
-            this.getClientList();
-            return 1;
-        } else {
-            alert("Usuário ou senha inválidos.");
-        }
-        return undefined;
-    }
     doLogin(event, username, password) {
         event.preventDefault();
-        let userId = this.authenticateUser(username, password);
-        this.setState({
-            userId: userId
+        const myAuth = new Auth();
+        let oBodyData = {
+            "user": username,
+            "passwd": password,
+            "op": "authenticateUser"
+        };
+        let response = myAuth.doPost(oBodyData).then((response) => {
+            if (response.user && response.role) {
+                this.setState({
+                    userId: 1,
+                    userName: response.user,
+                    userRole: response.role
+                });
+                this.getClientList();
+            } else {
+                alert(response.result);
+            }                
         });
     }
     doLogout(event) {
         event.preventDefault();
         this.unsetVehiclesGarage();
         this.resetDefaultState();
+    }
+    manageUsers(event) {
+        this.setState({
+            showUsersManagement: true
+        });
+    }
+    onCloseDialog() {
+        this.setState({
+            showUsersManagement: false
+        });
+    }
+    onSubmitForm(user, passwd, rePasswd, adminUser, adminPasswd) {
+        if (passwd !== rePasswd) {
+            alert("Senha e Confirmação de Senha não são idênticas.");
+        } else if (this.state.userRole !== "admin") {
+            alert("Seu usuário não tem permissões para esta função.");
+        } else {
+            try {
+                let oBodyData = {
+                    "user": user,
+                    "passwd": passwd,
+                    "adminUser": adminUser,
+                    "adminPasswd": adminPasswd,
+                    "rePasswd": rePasswd,
+                    "op": "updateUser"
+                };
+                const myAuth = new Auth();
+                let response = myAuth.doPost(oBodyData).then((response) => {
+                    if (response.result) {
+                        alert(response.result);
+                    }
+                });
+            } catch (e) {
+                throw new Error(e);
+            }
+        }
+        // adminUser, user, passwd, rePasswd, adminPasswd
     }
     showVehiclesGarage(event) {
         event.preventDefault();
@@ -120,9 +166,10 @@ export default class Layout extends App {
     render() {
         return (
             <div className="layout">
-                <Header isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName} doLogin={this.doLogin} doLogout={this.doLogout} clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
+                <Header isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName} userRole={ this.state.userRole } doLogin={this.doLogin} doLogout={this.doLogout} manageUsers={ this.manageUsers } clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
                 <Content isDirectLink={this.state.isDirectLink} mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
                 <Modal isDirectLink={this.state.isDirectLink} showVehiclesGarage={this.state.showVehiclesGarage} hideVehiclesGarage={this.hideVehiclesGarage} locateVehicleGarage={this.locateVehicleGarage} vehiclesGarageList={this.state.vehiclesGarageList} />
+                <Dialog showDialog={ this.state.showUsersManagement } title="Gerenciar Usuários" onCloseDialog={ this.onCloseDialog } onSubmitForm={ this.onSubmitForm } />
             </div>
         );
     }
