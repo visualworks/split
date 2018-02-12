@@ -35,11 +35,13 @@ export default class Content extends App {
         let filterControls = <div id="overlayer-map">
             <FilterControls changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
         </div>;
+        let mapKey = this.state.mapAccessKey;
         return (<section className="content">
             <div id="map">
                 { this.props.isDirectLink ? '' : filterControls }
                 <GoogleMapReact 
-                    bootstrapURLKeys={this.state.mapAccessKey}
+                    bootstrapURLKeys={{apiKey: mapKey, language: 'pt', region: 'br'}}
+                    layerTypes={['TrafficLayer', 'TransitLayer']}
                     defaultCenter={this.mapCenter}
                     center={this.props.mapCenter}
                     defaultZoom={this.mapZoom}
