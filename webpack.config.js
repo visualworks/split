@@ -8,12 +8,12 @@ module.exports = {
         path: path.resolve(__dirname, "dist/"),
         filename: "index.js"
     },
-    // devtool: "cheap-module-source-map",
-    devtool: "eval-source-map",
+    devtool: "cheap-module-source-map",
+    // devtool: "eval-source-map",
     plugins: [
       new webpack.DefinePlugin({
         "process.env": {
-          "NODE_ENV": JSON.stringify("development")
+          "NODE_ENV": JSON.stringify("production")
         }
       }),
       new UglifyJsPlugin(),

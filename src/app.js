@@ -180,6 +180,9 @@ export default class App extends Component {
     }
     getReferencePointsPerRoute(routeId) {
         let referencePointsList = [];
+        const maps = this.state.maps;
+        const directionsDisplay = new maps.DirectionsRenderer();
+        directionsDisplay.setMap(null);
         if (routeId) {
             this.setState({
                 selectedRouteId: routeId,
@@ -196,12 +199,16 @@ export default class App extends Component {
             }).then((json) => {
                 if (json.ListaPontosReferenciaRotaResult && json.ListaPontosReferenciaRotaResult.hasOwnProperty("WSPontoReferencia")) {
                     referencePointsList = json.ListaPontosReferenciaRotaResult.WSPontoReferencia;
-                    let centerReference = (referencePointsList.length > 4) ? Math.floor(referencePointsList.length/2) : 0;
+                    let centerReference = (referencePointsList.length > 4) ? Math.floor(referencePointsList.length/2) : 1;
                     this.setState({
                         referencePointsList: referencePointsList,
-                        mapCenter: {lat: referencePointsList[centerReference].Latitude, lng: referencePointsList[centerReference].Longitude},
+                        mapCenter: {
+                            lat: referencePointsList[centerReference].Latitude,
+                            lng: referencePointsList[centerReference].Longitude
+                        },
                         mapZoom: (referencePointsList.length > 10) ? this.state.defaultMapZoom - 2 : this.state.defaultMapZoom + 1
                     });
+                    this.showRoute();
                     return referencePointsList;
                 } else {
                     throw new Error(this.state.CONST_MAPPINGS.REFERENCE_POINTS_NOT_FOUND);
@@ -250,6 +257,54 @@ export default class App extends Component {
         }
         return vehiclesInRoute;
     }
+    showRoute() {
+		const maps = this.state.maps;
+        const directionsService = new maps.DirectionsService();
+        const directionsDisplay = new maps.DirectionsRenderer();
+        let latLngOrigin = {
+            lat: this.state.referencePointsList[0].Latitude,
+            lng: this.state.referencePointsList[0].Longitude
+        };
+        let latLngDestination = {
+            lat: this.state.referencePointsList[this.state.referencePointsList.length - 1].Latitude,
+            lng: this.state.referencePointsList[this.state.referencePointsList.length - 1].Longitude
+        };
+        let aWaypoints = [];
+        this.state.referencePointsList.forEach((reference, index) => {
+            if (index !== 0 && index !== (this.state.referencePointsList.length - 1)) {
+                aWaypoints.push({
+                    location: {
+                        lat: reference.Latitude,
+                        lng: reference.Longitude,
+                    },
+                    stopover: true
+                });
+            } 
+        });
+        let routeOptions = {
+            origin: latLngOrigin,
+            destination: latLngDestination,
+            travelMode: "DRIVING",
+            unitSystem: google.maps.UnitSystem.METRIC,
+            waypoints: aWaypoints,
+            optimizeWaypoints: false,
+            provideRouteAlternatives: false,
+            avoidFerries: false,
+            avoidHighways: false,
+            avoidTolls: false,
+            region: "br"
+        };
+        directionsService.route(routeOptions, (response, status) => {
+            if (status === 'OK') {
+                directionsDisplay.setMap(this.state.map);
+                directionsDisplay.setDirections(response);
+                console.log(response.routes[0])
+            } else {
+                directionsDisplay.setMap(null);
+                console.log('Directions request failed due to ' + status);
+            }
+        });
+	};
     loadDirectLink() {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
@@ -297,6 +352,9 @@ export default class App extends Component {
         return this.state.mapAccessKey;
     }
     resetDefaultState() {
+        const maps = this.state.maps;
+        const directionsDisplay = new maps.DirectionsRenderer();
+        directionsDisplay.setMap(null);
         this.setState({
             clientId: 0,
             userId: 0,
