@@ -39,6 +39,14 @@ export default class FilterControls extends App {
                         Mostrar <a href="https://developers.google.com/maps/documentation/javascript/trafficlayer#transit_layer" target="_blank">trânsito</a>
                     </label>
                 </div>
+                <div className="control">
+                    <div className="select is-rounded">
+                        <select name="mapTypeId" ref={ (mapType) => this.mapType = mapType } onChange={ (event) => this.props.onChangeMapType(this.mapType.value) }>
+                            <option value="roadmap">Mapa de Vias</option>
+                            <option value="satellite">Satélite</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         );
     }

@@ -16,8 +16,11 @@ export default class App extends Component {
             selectedRouteId: 0,
             referencePointsList: [],
             vehiclesInRoute: [],
+            map: {},
+            maps: {},
             mapCenter: {lat: -22.79575, lng: -43.36342},
             mapZoom: 16,
+            mapTypeId: "satellite",
             defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
             defaultMapZoom: 16,
             mapAccessKey: {
@@ -307,8 +310,11 @@ export default class App extends Component {
             selectedRouteId: 0,
             referencePointsList: [],
             vehiclesInRoute: [],
+            map: {},
+            maps: {},
             mapCenter: {lat: -22.79575, lng: -43.36342},
             mapZoom: 16,
+            mapTypeId: "satellite",
             defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
             defaultMapZoom: 16,
             mapAccessKey: {

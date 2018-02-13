@@ -25,7 +25,7 @@ export default class Content extends App {
             });
         }
         const VehiclesInRouteMarker = ({text}) => {
-            return (<a className="button is-small is-primary" title={text}><span classNme="icon"><i className="fa fa-bus"></i></span> {text}</a>);
+            return (<a className="button is-small is-primary" title={text}><span className="icon"><i className="fa fa-bus"></i></span> {text}</a>);
         };
         if (this.props.vehiclesInRoute.length > 0) {
             this.props.vehiclesInRoute.forEach((vehicleInRoute, index) => {
@@ -33,7 +33,7 @@ export default class Content extends App {
             });
         }
         let filterControls = <div id="overlayer-map">
-            <FilterControls showTransitLayer={ this.props.showTransitLayer } showTrafficLayer={ this.props.showTrafficLayer } onChangeTraffic={ this.props.onChangeTraffic } onChangeTransit={ this.props.onChangeTransit } changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
+            <FilterControls mapTypeId={ this.props.mapTypeId } onChangeMapType={ this.props.onChangeMapType } showTransitLayer={ this.props.showTransitLayer } showTrafficLayer={ this.props.showTrafficLayer } onChangeTraffic={ this.props.onChangeTraffic } onChangeTransit={ this.props.onChangeTransit } changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
         </div>;
         let aLayerTypes = [];
         if (this.props.showTransitLayer) {
@@ -56,21 +56,24 @@ export default class Content extends App {
             };
             aLayerTypes.find(fnFindRemove);
         }
-
         return (<section className="content">
             <div id="map">
                 { this.props.isDirectLink ? '' : filterControls }
-                <GoogleMapReact 
-                    bootstrapURLKeys={{apiKey: this.state.mapAccessKey, language: 'pt', region: 'br'}}
-                    layerTypes={aLayerTypes}
+                <GoogleMapReact
+                    bootstrapURLKeys={{
+                        key: this.state.mapAccessKey.key,
+                        language: 'pt',
+                        region: 'br'
+                    }}
+                    layerTypes={ aLayerTypes }
                     yesIWantToUseGoogleMapApiInternals={ true }
-                    onGoogleApiLoaded={({map, maps}) => map.setMapTypeId("terrain")}
-                    defaultCenter={this.mapCenter}
-                    center={this.props.mapCenter}
-                    defaultZoom={this.mapZoom}
-                    zoom={this.props.mapZoom}>
-                    {this.referencePointsList}
-                    {this.vehiclesInRoute}
+                    onGoogleApiLoaded={ this.props.setMap }
+                    defaultCenter={ this.mapCenter }
+                    center={ this.props.mapCenter }
+                    defaultZoom={ this.mapZoom }
+                    zoom={ this.props.mapZoom }>
+                    { this.referencePointsList }
+                    { this.vehiclesInRoute }
                 </GoogleMapReact>
             </div>
         </section>);

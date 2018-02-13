@@ -26,6 +26,8 @@ export default class Layout extends App {
         this.onSubmitForm = this.onSubmitForm.bind(this);
         this.onChangeTraffic = this.onChangeTraffic.bind(this);
         this.onChangeTransit = this.onChangeTransit.bind(this);
+        this.onChangeMapType = this.onChangeMapType.bind(this);
+        this.setMap = this.setMap.bind(this);
     }
     setClient(event, clientId, clientName) {
         event.preventDefault();
@@ -172,6 +174,30 @@ export default class Layout extends App {
             showTransitLayer: bShowTransit
         });
     }
+    onChangeMapType(sMapType) {
+        if (sMapType === "satellite") {
+            this.setState({
+                showTransitLayer: false,
+                showTrafficLayer: false
+            });
+        } else if (sMapType === "roadmap") {
+            this.setState({
+                showTransitLayer: true,
+                showTrafficLayer: true
+            });
+        }
+        this.setState({
+            mapTypeId: sMapType
+        });
+        this.state.map.setMapTypeId(sMapType);
+    }
+    setMap(args) {
+        // args.map.setMapTypeId(this.props.mapTypeId);
+        this.setState({
+            map: args.map,
+            maps: args.maps
+        });
+    }
     componentDidMount() {
         this.loadDirectLink()
     }
@@ -179,7 +205,7 @@ export default class Layout extends App {
         return (
             <div className="layout">
                 <Header isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName} userRole={ this.state.userRole } doLogin={this.doLogin} doLogout={this.doLogout} manageUsers={ this.manageUsers } clientId={this.state.clientId} clientName={this.state.clientName} clientList={this.state.clientList} setClient={this.setClient} showVehiclesGarage={this.showVehiclesGarage} />
-                <Content onChangeTraffic={ this.onChangeTraffic } onChangeTransit={ this.onChangeTransit } showTrafficLayer={ this.state.showTrafficLayer } showTransitLayer={ this.state.showTransitLayer } isDirectLink={this.state.isDirectLink} mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
+                <Content setMap={ this.setMap } mapTypeId={ this.state.mapTypeId } onChangeMapType={ this.onChangeMapType } onChangeTraffic={ this.onChangeTraffic } onChangeTransit={ this.onChangeTransit } showTrafficLayer={ this.state.showTrafficLayer } showTransitLayer={ this.state.showTransitLayer } isDirectLink={this.state.isDirectLink} mapZoom={this.state.mapZoom} mapCenter={this.state.mapCenter} vehiclesInRoute={this.state.vehiclesInRoute} referencePointsList={this.state.referencePointsList} changeRoutes={this.changeRoutes} executeSearch={this.executeSearch} getRoutes={this.getRoutes} getLines={this.getLines} changeLines={this.changeLines} clientId={this.state.clientId} linesList={this.state.linesList} selectedLineId={this.state.selectedLineList} routesList={this.state.routesList} selectedRouteId={this.state.selectedRouteId} />
                 <Modal isDirectLink={this.state.isDirectLink} showVehiclesGarage={this.state.showVehiclesGarage} hideVehiclesGarage={this.hideVehiclesGarage} locateVehicleGarage={this.locateVehicleGarage} vehiclesGarageList={this.state.vehiclesGarageList} />
                 <Dialog showDialog={ this.state.showUsersManagement } title="Gerenciar Usuários" onCloseDialog={ this.onCloseDialog } onSubmitForm={ this.onSubmitForm } />
             </div>
