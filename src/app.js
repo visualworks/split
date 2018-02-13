@@ -26,6 +26,8 @@ export default class App extends Component {
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             showUsersManagement: false,
+            showTrafficLayer: true,
+            showTransitLayer: true,
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false
@@ -315,6 +317,8 @@ export default class App extends Component {
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             showUsersManagement: false,
+            showTrafficLayer: true,
+            showTransitLayer: true,
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false

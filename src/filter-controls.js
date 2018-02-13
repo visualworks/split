@@ -27,6 +27,18 @@ export default class FilterControls extends App {
                 <div className="control">
                     <button type="button" className="button is-success" onClick={ (event) => { this.props.executeSearch(event) }}>Buscar</button>
                 </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" ref={ (traffic) => this.traffic = traffic } onChange={ (event) => this.props.onChangeTraffic(this.traffic.checked) } checked={ this.props.showTrafficLayer } />
+                        Mostrar <a href="https://developers.google.com/maps/documentation/javascript/trafficlayer#traffic_layer" target="_blank">rotas de tráfego</a>
+                    </label>
+                </div>
+                <div className="control">
+                    <label className="checkbox">
+                        <input type="checkbox" ref={ (transit) => this.transit = transit } onChange={ (event) => this.props.onChangeTransit(this.transit.checked) } checked={ this.props.showTransitLayer } />
+                        Mostrar <a href="https://developers.google.com/maps/documentation/javascript/trafficlayer#transit_layer" target="_blank">trânsito</a>
+                    </label>
+                </div>
             </div>
         );
     }

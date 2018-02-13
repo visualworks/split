@@ -33,15 +33,38 @@ export default class Content extends App {
             });
         }
         let filterControls = <div id="overlayer-map">
-            <FilterControls changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
+            <FilterControls showTransitLayer={ this.props.showTransitLayer } showTrafficLayer={ this.props.showTrafficLayer } onChangeTraffic={ this.props.onChangeTraffic } onChangeTransit={ this.props.onChangeTransit } changeRoutes={this.props.changeRoutes} executeSearch={this.props.executeSearch} getRoutes={this.props.getRoutes} getLines={this.props.getLines} changeLines={this.props.changeLines} clientId={this.props.clientId} linesList={this.props.linesList} selectedLineId={this.props.selectedLineId} routesList={this.props.routesList} selectedRouteId={this.props.selectedRouteId} />
         </div>;
-        let mapKey = this.state.mapAccessKey;
+        let aLayerTypes = [];
+        if (this.props.showTransitLayer) {
+            aLayerTypes.push("TransitLayer");
+        } else {
+            let fnFindRemove = (element, index) => {
+                if(element === "TransitLayer") {
+                    aLayerTypes.splice(index, 1);
+                }
+            };
+            aLayerTypes.find(fnFindRemove);
+        }
+        if (this.props.showTrafficLayer){
+            aLayerTypes.push("TrafficLayer");
+        } else {
+            let fnFindRemove = (element, index) => {
+                if(element === "TrafficLayer") {
+                    aLayerTypes.splice(index, 1);
+                }
+            };
+            aLayerTypes.find(fnFindRemove);
+        }
+
         return (<section className="content">
             <div id="map">
                 { this.props.isDirectLink ? '' : filterControls }
                 <GoogleMapReact 
-                    bootstrapURLKeys={{apiKey: mapKey, language: 'pt', region: 'br'}}
-                    layerTypes={['TrafficLayer', 'TransitLayer']}
+                    bootstrapURLKeys={{apiKey: this.state.mapAccessKey, language: 'pt', region: 'br'}}
+                    layerTypes={aLayerTypes}
+                    yesIWantToUseGoogleMapApiInternals={ true }
+                    onGoogleApiLoaded={({map, maps}) => map.setMapTypeId("terrain")}
                     defaultCenter={this.mapCenter}
                     center={this.props.mapCenter}
                     defaultZoom={this.mapZoom}
