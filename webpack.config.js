@@ -8,6 +8,7 @@ module.exports = {
         path: path.resolve(__dirname, "dist/"),
         filename: "index.js"
     },
+    mode: "production",
     devtool: "cheap-module-source-map",
     // devtool: "eval-source-map",
     plugins: [
@@ -22,7 +23,7 @@ module.exports = {
         modules: [path.resolve('./src'), 'node_modules']
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.js$/,
             exclude: /node_modules/,
             loader: "babel-loader",
