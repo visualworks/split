@@ -20,16 +20,18 @@
   "homepage": "https://github.com/henriquemattos/systemsat#readme",
   "dependencies": {
     "bulma": "^0.6.2",
+    "copy-webpack-plugin": "^4.5.0",
     "google-map-react": "^0.32.0",
+    "html-webpack-plugin": "^3.0.6",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "webpack": "^4.1.0"
+    "webpack": "^4.1.1"
   },
   "devDependencies": {
     "@mapbox/point-geometry": "^0.1.0",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.3",
+    "babel-loader": "^7.1.4",
     "babel-plugin-transform-react-constant-elements": "^6.23.0",
     "babel-plugin-transform-react-inline-elements": "^6.22.0",
     "babel-plugin-transform-react-jsx-compat": "^6.24.1",
