@@ -1,5 +1,5 @@
 const WEBSERVICE = require("const.json");
-require("css/style.scss");
+require("scss/style.scss");
 
 import React, {Component} from "react";
 import ReactDOM from "react-dom";

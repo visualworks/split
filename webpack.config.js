@@ -22,7 +22,10 @@ module.exports = {
             },
             {
                 test: /\.(css|scss|sass)$/,
-                include: [path.resolve(__dirname, "src/css")],
+                include: [
+                    path.resolve(__dirname, "src")
+                ],
+                exclude: /node_modules/,
                 loader: ["style-loader", "css-loader", "sass-loader"]
             },
             {
@@ -38,9 +41,9 @@ module.exports = {
     resolve: {
         modules: [
             "node_modules",
-            path.resolve("./src")
+            path.resolve("src")
         ],
-        extensions: [".js", ".jsx", ".scss"]
+        extensions: [".js", ".jsx", ".scss", ".css"]
     },
     performance: {
         hints: "warning",
@@ -73,10 +76,6 @@ module.exports = {
             {
                 from: path.resolve(__dirname, "src/img"),
                 to: path.resolve(__dirname, "dist/img")
-            },
-            {
-                from: path.resolve(__dirname, "src/fonts"),
-                to: path.resolve(__dirname, "dist/fonts")
             }
         ])
     ],
