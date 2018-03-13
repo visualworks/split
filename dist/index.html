@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Portal JAL powered by Zirix</title>
-</head>
-<body>
-    <div id="app"></div>
-    <script src="index.js" type="text/javascript"></script>
-</body>
+<html lang="pt">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="author" content="Visual Works" />
+        <meta name="description" content="Grupo JAL: O terceiro maior grupo de transportes de passageiros do estado do Rio de Janeiro. A empresa opera desde 1957 e atualmente serve às cidades de São João de Meriti, Nilópolis, Duque de Caxias, Mesquita, Nova Iguaçu, Belford Roxo, Itaguaí, Mangaratiba e Rio de Janeiro." />
+        <link rel="icon" href="/img/favicon.png" />
+        <link rel="shortcut icon" href="/img/favicon.png" type="image/png" />
+
+        <meta property="og:title" content="Portal JAL - Aonde está o ônibus?!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.portaljal.com.br" />
+        <meta property="og:image" content="https://www.portaljal.com.br/img/logo-jal.png" />
+        <meta property="og:image:alt" content="Portal JAL - Aonde está o ônibus?!" />
+        <meta property="og:description" content="Grupo JAL: O terceiro maior grupo de transportes de passageiros do estado do Rio de Janeiro. A empresa opera desde 1957 e atualmente serve às cidades de São João de Meriti, Nilópolis, Duque de Caxias, Mesquita, Nova Iguaçu, Belford Roxo, Itaguaí, Mangaratiba e Rio de Janeiro." />
+        <meta property="og:locale" content="pt_BR" />
+        <meta property="og:locale:alternate" content="en_US" />
+        <meta property="og:site_name" content="Portal JAL - Aonde está o ônibus?!" />
+        <title>Portal JAL - Aonde está o ônibus?!</title>
+    </head>
+    <body>
+        <div id="app"></div>
+        <div id="fb-root"></div>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115416960-1"></script>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10&appId=187724295108818';
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-115416960-1');
+        </script>
+    <script type="text/javascript" src="index.js"></script></body>
 </html>

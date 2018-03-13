@@ -1,10 +1,7 @@
 $fa-font-path: "//netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts";
 @import "node_modules/font-awesome/scss/font-awesome";
 
-@import "node_modules/bulma/sass/utilities/initial-variables";
-@import "node_modules/bulma/sass/elements/icon";
 @import "node_modules/bulma/bulma";
-@import "node_modules/bulma/sass/components/_all";
 
 .navbar-brand .navbar-item img.logo:first-child {
     margin-right: 30px;

@@ -47,10 +47,21 @@ module.exports = {
     },
     performance: {
         hints: "warning",
-        maxAssetSize: 600000,
-        maxEntrypointSize: 600000,
+        maxAssetSize: 700000,
+        maxEntrypointSize: 700000,
         assetFilter: function(assetFilename) {
             return assetFilename.endsWith(".css") || assetFilename.endsWith(".js");
+        }
+    },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                commons: {
+                    name: "commons",
+                    chunks: "initial",
+                    minChunks: 2
+                }
+            }
         }
     },
     target: "web",
