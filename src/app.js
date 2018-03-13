@@ -298,10 +298,9 @@ export default class App extends Component {
             if (status === 'OK') {
                 directionsDisplay.setMap(this.state.map);
                 directionsDisplay.setDirections(response);
-                console.log(response.routes[0])
             } else {
                 directionsDisplay.setMap(null);
-                console.log('Directions request failed due to ' + status);
+                console.error('Directions request failed due to ' + status);
             }
         });
 	};
