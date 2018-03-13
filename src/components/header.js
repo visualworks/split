@@ -128,8 +128,8 @@ export default class Header extends App {
             <div className="container">
                 <div className="navbar-brand">
                     <a href="javascript:void(null)" className="navbar-item">
-                        <img src="./img/logo-zirix.png" alt="Zirix Soluções em Rastreamento" title="Zirix Soluções em Rastreamento" className="logo"/>
-                        <img src="./img/logo-jal.jpg" alt="Grupo JAL" title="Grupo JAL" className="logo" />
+                        <img src="/img/logo-zirix.png" alt="Zirix Soluções em Rastreamento" title="Zirix Soluções em Rastreamento" className="logo"/>
+                        <img src="/img/logo-jal.jpg" alt="Grupo JAL" title="Grupo JAL" className="logo" />
                     </a>
                     { this.props.isDirectLink ? '' : burgerMenu }
                 </div>

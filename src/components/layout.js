@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 import App from "app";
-import Header from "header";
-import Content from "content";
-import Modal from "modal";
-import Dialog from "dialog";
+import Header from "components/header";
+import Content from "components/content";
+import Modal from "components/modal";
+import Dialog from "components/dialog";
 import Auth from "auth";
 
 export default class Layout extends App {

@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 import App from "app";
 import GoogleMapReact from 'google-map-react';
-import FilterControls from "filter-controls";
+import FilterControls from "components/filter-controls";
 
 export default class Content extends App {
     constructor(props) {

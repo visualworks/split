@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import App from "app";
-// import TableRow from "table-row";
 
 export default class Modal extends App {
     constructor(props){

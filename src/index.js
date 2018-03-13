@@ -3,10 +3,8 @@ require("css/style.scss");
 
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
-import Layout from "layout";
+import Layout from "components/layout";
 
 const layout = <Layout />;
-ReactDOM.render(
-    layout,
-    document.getElementById("app")
-);
+const targetDiv = document.getElementById("app");
+ReactDOM.render(layout, targetDiv);
