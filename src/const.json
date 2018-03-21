@@ -1,5 +1,5 @@
 {
-    "SOAP_URL": "http://www.portaljal.com.br/soap.php",
+    "SOAP_URL": "https://www.portaljal.com.br/soap.php",
     "SOAP_OPERATOR": "op",
     "COL_CLIENT_PER_USER": "listaClientesPorUsuario",
     "COL_LINES_PER_CLIENT": "listaLinhasCliente",
