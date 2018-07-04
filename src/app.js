@@ -181,8 +181,10 @@ export default class App extends Component {
     getReferencePointsPerRoute(routeId) {
         let referencePointsList = [];
         const maps = this.state.maps;
-        const directionsDisplay = new maps.DirectionsRenderer();
-        directionsDisplay.setMap(null);
+        if (maps && typeof(maps.DirectionsRenderer) === "function") {
+            const directionsDisplay = new maps.DirectionsRenderer();
+            directionsDisplay.setMap(null);
+        }
         if (routeId) {
             this.setState({
                 selectedRouteId: routeId,
@@ -258,9 +260,11 @@ export default class App extends Component {
         return vehiclesInRoute;
     }
     showRoute() {
-		const maps = this.state.maps;
-        const directionsService = new maps.DirectionsService();
-        const directionsDisplay = new maps.DirectionsRenderer();
+        const maps = this.state.maps;
+        if (maps && typeof(maps.DirectionsRenderer) === "function") {
+            const directionsService = new maps.DirectionsService();
+            const directionsDisplay = new maps.DirectionsRenderer();
+        }
         let latLngOrigin = {
             lat: this.state.referencePointsList[0].Latitude,
             lng: this.state.referencePointsList[0].Longitude
@@ -294,15 +298,17 @@ export default class App extends Component {
             avoidTolls: false,
             region: "br"
         };
-        directionsService.route(routeOptions, (response, status) => {
-            if (status === 'OK') {
-                directionsDisplay.setMap(this.state.map);
-                directionsDisplay.setDirections(response);
-            } else {
-                directionsDisplay.setMap(null);
-                console.error('Directions request failed due to ' + status);
-            }
-        });
+        if (directionsService && directionsDisplay) {
+            directionsService.route(routeOptions, (response, status) => {
+                if (status === 'OK') {
+                    directionsDisplay.setMap(this.state.map);
+                    directionsDisplay.setDirections(response);
+                } else {
+                    directionsDisplay.setMap(null);
+                    console.error('Directions request failed due to ' + status);
+                }
+            });
+        }
 	};
     loadDirectLink() {
         const url = new URL(window.location.href);
@@ -320,12 +326,21 @@ export default class App extends Component {
                         routeId: params.get("rota")
                     });
                     try {
-                        this.getLinesPerClient(params.get("cliente"));
-                        this.getRoutesPerLine(params.get("linha"))
-                        this.getReferencePointsPerRoute(params.get("rota"));
-                        this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
-                        this.setState({
-                            isDirectLink: true
+                        const promiseRoutes = new Promise((fnResolve, fnReject) => {
+                            try {
+                                this.getLinesPerClient(params.get("cliente"));
+                                this.getRoutesPerLine(params.get("linha"))
+                                this.getReferencePointsPerRoute(params.get("rota"));
+                                this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
+                                this.setState({
+                                    isDirectLink: true
+                                });
+                            } catch (e) {
+                                fnReject("Error: " + e);
+                            }
+                        });
+                        promiseRoutes.then(() => {
+                            this.showRoute();
                         });
                     } catch (e) {
                         alert(e);
@@ -352,8 +367,10 @@ export default class App extends Component {
     }
     resetDefaultState() {
         const maps = this.state.maps;
-        const directionsDisplay = new maps.DirectionsRenderer();
-        directionsDisplay.setMap(null);
+        if (maps && typeof(maps.DirectionsRenderer) === "function") {
+            const directionsDisplay = new maps.DirectionsRenderer();
+            directionsDisplay.setMap(null);
+        }
         this.setState({
             clientId: 0,
             userId: 0,
