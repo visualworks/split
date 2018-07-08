@@ -10,22 +10,53 @@ export default class Content extends App {
         this.mapZoom = this.getDefaultMapZoom();
         this.referencePointsList = [];
         this.vehiclesInRoute = [];
+        this.routePointsList = [];
     }
     componentWillReceiveProps(){
         this.referencePointsList = [];
         this.vehiclesInRoute = [];
+        this.routePointsList = [];
     }
     render() {
-        const ReferencePointMarker = ({ text }) => {
-            return (<a className="button is-small is-danger" title={text}><span className="icon"><i className="fa fa-minus-square"></i></span></a>);
+        const toggleText = (event) => {
+            let target;
+            switch(event.target.classList[0]) {
+                case "fa":
+                    target = event.target.parentNode.parentNode.childNodes[1];
+                    break;
+                case "icon":
+                    target = event.target.parentNode.childNodes[1];
+                    break;
+                case "button":
+                    target = event.target.childNodes[1];
+                    break;
+            }
+            if (target && target.classList) {
+                target.classList.toggle("is-invisible");
+            }
         };
         if (this.props.referencePointsList.length > 0) {
+            const ReferencePointMarker = ({ text }) => {
+                return (<a className="button is-small is-danger marker-reference-point" title={text} onClick={toggleText}><span className="icon"><i className="fa fa-map-pin"></i></span><span className="is-invisible"> {text}</span></a>);
+            };
             this.props.referencePointsList.forEach((referencePoint, index) => {
-                this.referencePointsList.push(<ReferencePointMarker key={index} lat={referencePoint.Latitude} lng={referencePoint.Longitude} text={referencePoint.Nome} />);
+                if (typeof(referencePoint.Latitude) === "number" && typeof(referencePoint.Longitude) === "number") {
+                    this.referencePointsList.push(<ReferencePointMarker key={index} lat={referencePoint.Latitude} lng={referencePoint.Longitude} text={referencePoint.Nome} />);
+                }
             });
         }
+        if (this.props.routePointsList.length > 0) {
+            const RoutePointsMarker = () => {
+                return (<div className="button is-small is-info marker-route-point"><span className="icon"><i className="fa fa-minus-circle"></i></span></div>);
+            };
+            this.props.routePointsList.forEach((routePoint, index) => {
+                if (typeof(routePoint.Latitude) === "number" && typeof(routePoint.Longitude) === "number") {
+                    this.routePointsList.push(<RoutePointsMarker key={index} lat={routePoint.Latitude} lng={routePoint.Longitude} />);
+                }
+            })
+        }
         const VehiclesInRouteMarker = ({text}) => {
-            return (<a className="button is-small is-primary" title={text}><span className="icon"><i className="fa fa-bus"></i></span> {text}</a>);
+            return (<a className="button is-small is-primary marker-vehicles-route" title={text}><span className="icon"><i className="fa fa-bus"></i></span>&nbsp;{text}</a>);
         };
         if (this.props.vehiclesInRoute.length > 0) {
             this.props.vehiclesInRoute.forEach((vehicleInRoute, index) => {
@@ -74,6 +105,7 @@ export default class Content extends App {
                     zoom={ this.props.mapZoom }>
                     { this.referencePointsList }
                     { this.vehiclesInRoute }
+                    { this.routePointsList }
                 </GoogleMapReact>
             </div>
         </section>);

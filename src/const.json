@@ -14,5 +14,7 @@
     "ID_ROUTE_NOT_FOUND": "Você não especificou o ID da rota",
     "ID_LINE_NOT_FOUND": "Você não especificou o ID da linha",
     "VEHICLES_IN_ROUTE_NOT_FOUND": "Veículos em rota não encontrados para esta rota, linha e cliente",
-    "REFERENCE_POINTS_NOT_FOUND": "Pontos de Referência não encontrados para esta rota, linha e cliente"
+    "REFERENCE_POINTS_NOT_FOUND": "Pontos de Referência não encontrados para esta rota, linha e cliente",
+    "LOAD_DIRECT_LINK_FAILED": "Exibição do link direto falhou. Erro:",
+    "SHOW_ROUTES_FAILED": "Exibição das rotas falhou. Erro:"
 }
