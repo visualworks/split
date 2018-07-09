@@ -15,6 +15,7 @@ export default class App extends Component {
             routesList: [],
             selectedRouteId: 0,
             referencePointsList: [],
+            routePointsList: [],
             vehiclesInRoute: [],
             map: {},
             maps: {},
@@ -201,16 +202,15 @@ export default class App extends Component {
             }).then((json) => {
                 if (json.ListaPontosReferenciaRotaResult && json.ListaPontosReferenciaRotaResult.hasOwnProperty("WSPontoReferencia")) {
                     referencePointsList = json.ListaPontosReferenciaRotaResult.WSPontoReferencia;
-                    let centerReference = (referencePointsList.length > 4) ? Math.floor(referencePointsList.length/2) : 1;
+                    let centerReference = Math.ceil(referencePointsList.length/2);
                     this.setState({
                         referencePointsList: referencePointsList,
                         mapCenter: {
                             lat: referencePointsList[centerReference].Latitude,
                             lng: referencePointsList[centerReference].Longitude
                         },
-                        mapZoom: (referencePointsList.length > 10) ? this.state.defaultMapZoom - 2 : this.state.defaultMapZoom + 1
+                        mapZoom: (referencePointsList.length > 15) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1
                     });
-                    this.showRoute();
                     return referencePointsList;
                 } else {
                     throw new Error(this.state.CONST_MAPPINGS.REFERENCE_POINTS_NOT_FOUND);
@@ -218,6 +218,20 @@ export default class App extends Component {
             });
         }
         return referencePointsList;
+    }
+    showRoutePoints() {
+        const routePointsList = this.state.routePointsList;
+        if (routePointsList.length > 0) {
+            let centerReference = Math.ceil(routePointsList.length/2);
+            this.setState({
+                mapCenter: {
+                    lat: routePointsList[centerReference].Latitude,
+                    lng: routePointsList[centerReference].Longitude
+                },
+                mapZoom: (routePointsList.length > 10) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1
+            });
+            this.showRoute();
+        }
     }
     getVehiclesInRoute(lineId, routeId) {
         let vehiclesInRoute = [];
@@ -250,6 +264,13 @@ export default class App extends Component {
                                 intervalID: intervalID
                             });
                         }
+                        let routePointsList = json.ListaVeiculosEmViagemResult.WSVeiculosViagem.PontosRota.WSPonto;
+                        if (this.state.routePointsList !== routePointsList) {
+                            this.setState({
+                                routePointsList: routePointsList
+                            });
+                            this.showRoutePoints();
+                        }
                     }
                     return vehiclesInRoute;
                 } else {
@@ -261,53 +282,62 @@ export default class App extends Component {
     }
     showRoute() {
         const maps = this.state.maps;
-        if (maps && typeof(maps.DirectionsRenderer) === "function") {
-            const directionsService = new maps.DirectionsService();
-            const directionsDisplay = new maps.DirectionsRenderer();
-        }
-        let latLngOrigin = {
-            lat: this.state.referencePointsList[0].Latitude,
-            lng: this.state.referencePointsList[0].Longitude
-        };
-        let latLngDestination = {
-            lat: this.state.referencePointsList[this.state.referencePointsList.length - 1].Latitude,
-            lng: this.state.referencePointsList[this.state.referencePointsList.length - 1].Longitude
-        };
-        let aWaypoints = [];
-        this.state.referencePointsList.forEach((reference, index) => {
-            if (index !== 0 && index !== (this.state.referencePointsList.length - 1)) {
-                aWaypoints.push({
-                    location: {
-                        lat: reference.Latitude,
-                        lng: reference.Longitude,
-                    },
-                    stopover: true
+        const routePointsList = this.state.routePointsList;
+        if (routePointsList.length > 2) {
+            const routeOrigin = routePointsList[0];
+            const routeDestination = routePointsList[routePointsList.length - 1];
+            if (routePointsList.length > 25) {
+                routePointsList.splice(0, 1);
+                routePointsList.splice(routePointsList.length - 1, 1);
+                const iNumRoutePoints = routePointsList.length % 23;
+                let iJumpRoutePoints = Math.floor(routePointsList.length / iNumRoutePoints);
+                let aWaypoints = [];
+                routePointsList.forEach((reference, index) => {
+                    if (index === 0 || index === routePointsList.length - 1 || routePointsList[iJumpRoutePoints]) {
+                        aWaypoints.push({
+                            location: {
+                                lat: routePointsList[iJumpRoutePoints].Latitude,
+                                lng: routePointsList[iJumpRoutePoints].Longitude
+                            },
+                            stopover: true
+                        });
+                    }
+                })
+            }
+            if (maps && typeof(maps.DirectionsRenderer) === "function") {
+                const directionsService = new maps.DirectionsService();
+                const directionsDisplay = new maps.DirectionsRenderer();
+                let latLngOrigin = {
+                    lat: routeOrigin.Latitude,
+                    lng: routeOrigin.Longitude
+                };
+                let latLngDestination = {
+                    lat: routeDestination.Latitude,
+                    lng: routeDestination.Longitude
+                };
+                let routeOptions = {
+                    origin: latLngOrigin,
+                    destination: latLngDestination,
+                    travelMode: "DRIVING",
+                    unitSystem: google.maps.UnitSystem.METRIC,
+                    waypoints: aWaypoints,
+                    optimizeWaypoints: false,
+                    provideRouteAlternatives: false,
+                    avoidFerries: false,
+                    avoidHighways: false,
+                    avoidTolls: false,
+                    region: "br"
+                };
+                directionsService.route(routeOptions, (response, status) => {
+                    if (status === 'OK') {
+                        directionsDisplay.setMap(this.state.map);
+                        directionsDisplay.setDirections(response);
+                    } else {
+                        directionsDisplay.setMap(null);
+                        console.error(`${this.state.CONST_MAPPINGS.SHOW_ROUTES_FAILED} ${status}`);
+                    }
                 });
-            } 
-        });
-        let routeOptions = {
-            origin: latLngOrigin,
-            destination: latLngDestination,
-            travelMode: "DRIVING",
-            unitSystem: google.maps.UnitSystem.METRIC,
-            waypoints: aWaypoints,
-            optimizeWaypoints: false,
-            provideRouteAlternatives: false,
-            avoidFerries: false,
-            avoidHighways: false,
-            avoidTolls: false,
-            region: "br"
-        };
-        if (directionsService && directionsDisplay) {
-            directionsService.route(routeOptions, (response, status) => {
-                if (status === 'OK') {
-                    directionsDisplay.setMap(this.state.map);
-                    directionsDisplay.setDirections(response);
-                } else {
-                    directionsDisplay.setMap(null);
-                    console.error('Directions request failed due to ' + status);
-                }
-            });
+            }
         }
 	};
     loadDirectLink() {
@@ -326,25 +356,16 @@ export default class App extends Component {
                         routeId: params.get("rota")
                     });
                     try {
-                        const promiseRoutes = new Promise((fnResolve, fnReject) => {
-                            try {
-                                this.getLinesPerClient(params.get("cliente"));
-                                this.getRoutesPerLine(params.get("linha"))
-                                this.getReferencePointsPerRoute(params.get("rota"));
-                                this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
-                                this.setState({
-                                    isDirectLink: true
-                                });
-                            } catch (e) {
-                                fnReject("Error: " + e);
-                            }
+                        this.getLinesPerClient(params.get("cliente"));
+                        this.getRoutesPerLine(params.get("linha"))
+                        this.getReferencePointsPerRoute(params.get("rota"));
+                        this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
+                        this.setState({
+                            isDirectLink: true
                         });
-                        promiseRoutes.then(() => {
-                            this.showRoute();
-                        });
-                    } catch (e) {
-                        alert(e);
-                        throw new Error(e);
+                    } catch (error) {
+                        alert(`${this.state.CONST_MAPPINGS.LOAD_DIRECT_LINK_FAILED} ${error}`);
+                        throw new Error(`${this.state.CONST_MAPPINGS.LOAD_DIRECT_LINK_FAILED} ${error}`);
                     }
                 } else {
                     alert(this.state.CONST_MAPPINGS.ID_ROUTE_NOT_FOUND);
@@ -383,6 +404,7 @@ export default class App extends Component {
             routesList: [],
             selectedRouteId: 0,
             referencePointsList: [],
+            routePointsList: [],
             vehiclesInRoute: [],
             map: {},
             maps: {},

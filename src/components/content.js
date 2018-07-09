@@ -56,7 +56,7 @@ export default class Content extends App {
             })
         }
         const VehiclesInRouteMarker = ({text}) => {
-            return (<a className="button is-small is-primary marker-vehicles-route" title={text}><span className="icon"><i className="fa fa-bus"></i></span>&nbsp;{text}</a>);
+            return (<a className="button is-small is-primary is-rounded marker-vehicles-route" title={text}><span className="icon"><i className="fa fa-bus"></i></span>&nbsp;{text}</a>);
         };
         if (this.props.vehiclesInRoute.length > 0) {
             this.props.vehiclesInRoute.forEach((vehicleInRoute, index) => {
