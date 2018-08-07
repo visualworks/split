@@ -10,12 +10,10 @@ export default class Content extends App {
         this.mapZoom = this.getDefaultMapZoom();
         this.referencePointsList = [];
         this.vehiclesInRoute = [];
-        this.routePointsList = [];
     }
     componentWillReceiveProps(){
         this.referencePointsList = [];
         this.vehiclesInRoute = [];
-        this.routePointsList = [];
     }
     render() {
         const toggleText = (event) => {
@@ -44,16 +42,6 @@ export default class Content extends App {
                     this.referencePointsList.push(<ReferencePointMarker key={index} lat={referencePoint.Latitude} lng={referencePoint.Longitude} text={referencePoint.Nome} />);
                 }
             });
-        }
-        if (this.props.routePointsList.length > 0) {
-            const RoutePointsMarker = () => {
-                return (<div className="button is-small is-info marker-route-point"><span className="icon"><i className="fa fa-minus-circle"></i></span></div>);
-            };
-            this.props.routePointsList.forEach((routePoint, index) => {
-                if (typeof(routePoint.Latitude) === "number" && typeof(routePoint.Longitude) === "number") {
-                    this.routePointsList.push(<RoutePointsMarker key={index} lat={routePoint.Latitude} lng={routePoint.Longitude} />);
-                }
-            })
         }
         const VehiclesInRouteMarker = ({text}) => {
             return (<a className="button is-small is-primary is-rounded marker-vehicles-route" title={text}><span className="icon"><i className="fa fa-bus"></i></span>&nbsp;{text}</a>);
@@ -105,7 +93,6 @@ export default class Content extends App {
                     zoom={ this.props.mapZoom }>
                     { this.referencePointsList }
                     { this.vehiclesInRoute }
-                    { this.routePointsList }
                 </GoogleMapReact>
             </div>
         </section>);

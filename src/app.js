@@ -19,13 +19,14 @@ export default class App extends Component {
             vehiclesInRoute: [],
             map: {},
             maps: {},
+            routePolyline: undefined,
             mapCenter: {lat: -22.79575, lng: -43.36342},
             mapZoom: 16,
             mapTypeId: "satellite",
             defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
             defaultMapZoom: 16,
             mapAccessKey: {
-                key: "AIzaSyCMfQ6a_eX4SwWbyfUqEVCdXYnovZfg9fk"
+                key: process.env.MAP_ACCESS_KEY
             },
             vehiclesGarageList: [],
             showVehiclesGarage: false,
@@ -281,63 +282,28 @@ export default class App extends Component {
         return vehiclesInRoute;
     }
     showRoute() {
-        const maps = this.state.maps;
+        const maps = this.state.map;
         const routePointsList = this.state.routePointsList;
         if (routePointsList.length > 2) {
-            const routeOrigin = routePointsList[0];
-            const routeDestination = routePointsList[routePointsList.length - 1];
-            if (routePointsList.length > 25) {
-                routePointsList.splice(0, 1);
-                routePointsList.splice(routePointsList.length - 1, 1);
-                const iNumRoutePoints = routePointsList.length % 23;
-                let iJumpRoutePoints = Math.floor(routePointsList.length / iNumRoutePoints);
-                let aWaypoints = [];
-                routePointsList.forEach((reference, index) => {
-                    if (index === 0 || index === routePointsList.length - 1 || routePointsList[iJumpRoutePoints]) {
-                        aWaypoints.push({
-                            location: {
-                                lat: routePointsList[iJumpRoutePoints].Latitude,
-                                lng: routePointsList[iJumpRoutePoints].Longitude
-                            },
-                            stopover: true
-                        });
-                    }
-                })
+            const aWaypoints = routePointsList.map((reference) => ({
+                lat: reference.Latitude,
+                lng: reference.Longitude
+            }));
+            if (this.state.routePolyline) {
+                this.state.routePolyline.setMap(null);
+                this.state.routePolyline.setPath([]);
             }
-            if (maps && typeof(maps.DirectionsRenderer) === "function") {
-                const directionsService = new maps.DirectionsService();
-                const directionsDisplay = new maps.DirectionsRenderer();
-                let latLngOrigin = {
-                    lat: routeOrigin.Latitude,
-                    lng: routeOrigin.Longitude
-                };
-                let latLngDestination = {
-                    lat: routeDestination.Latitude,
-                    lng: routeDestination.Longitude
-                };
-                let routeOptions = {
-                    origin: latLngOrigin,
-                    destination: latLngDestination,
-                    travelMode: "DRIVING",
-                    unitSystem: google.maps.UnitSystem.METRIC,
-                    waypoints: aWaypoints,
-                    optimizeWaypoints: false,
-                    provideRouteAlternatives: false,
-                    avoidFerries: false,
-                    avoidHighways: false,
-                    avoidTolls: false,
-                    region: "br"
-                };
-                directionsService.route(routeOptions, (response, status) => {
-                    if (status === 'OK') {
-                        directionsDisplay.setMap(this.state.map);
-                        directionsDisplay.setDirections(response);
-                    } else {
-                        directionsDisplay.setMap(null);
-                        console.error(`${this.state.CONST_MAPPINGS.SHOW_ROUTES_FAILED} ${status}`);
-                    }
-                });
-            }
+            const routePolyline = new google.maps.Polyline({
+                path: aWaypoints,
+                geodesic: true,
+                strokeColor: '#209cee',
+                strokeOpacity: 1.0,
+                strokeWeight: 5
+            });
+            this.setState({
+                routePolyline: routePolyline
+            });
+            this.state.routePolyline.setMap(maps);
         }
 	};
     loadDirectLink() {
@@ -408,13 +374,14 @@ export default class App extends Component {
             vehiclesInRoute: [],
             map: {},
             maps: {},
+            routePolyline: undefined,
             mapCenter: {lat: -22.79575, lng: -43.36342},
             mapZoom: 16,
             mapTypeId: "satellite",
             defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
             defaultMapZoom: 16,
             mapAccessKey: {
-                key: "AIzaSyCMfQ6a_eX4SwWbyfUqEVCdXYnovZfg9fk"
+                key: process.env.MAP_ACCESS_KEY
             },
             vehiclesGarageList: [],
             showVehiclesGarage: false,

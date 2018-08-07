@@ -66,11 +66,10 @@ module.exports = {
     },
     target: "web",
     stats: "detailed",
-    mode: "production",
     plugins: [
         new webpack.DefinePlugin({
             "process.env": {
-                "NODE_ENV": JSON.stringify("production")
+                MAP_ACCESS_KEY: JSON.stringify(process.env.MAP_ACCESS_KEY)
             }
         }),
         new UglifyJsPlugin(),
