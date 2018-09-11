@@ -102,7 +102,7 @@ export default class Header extends App {
         let loggedOutMenu = <div className="navbar-end">
             {btnVeiculosGaragem}
             <div className="navbar-item">
-                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus="true" />
+                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus={true} />
             </div>
             <div className="navbar-item">
                 <input ref={(password) => { this.password = password; }} onKeyPress={this._handleKeyPress} className="input" type="password" placeholder="senha" />
