@@ -169,10 +169,13 @@ export default class App extends Component {
             }).then((json) => {
                 if (json.ListaRotasLinhaResult && json.ListaRotasLinhaResult.hasOwnProperty("WSRota")) {
                     routesList = json.ListaRotasLinhaResult.WSRota;
-                    this.setState({
-                        routesList: routesList,
-                        selectedRouteId: (routesList.Id_Rota) ? routesList.Id_Rota : routesList[0].Id_Rota
-                    });
+                    const isDirectLink = this.state.isDirectLink;
+                    if (!isDirectLink) {
+                        this.setState({
+                            routesList: routesList,
+                            selectedRouteId: (routesList.Id_Rota) ? routesList.Id_Rota : routesList[0].Id_Rota
+                        });
+                    }
                     return routesList;
                 }
                 throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
@@ -319,7 +322,8 @@ export default class App extends Component {
                 });
                 if (params.has("rota")) {
                     this.setState({
-                        routeId: params.get("rota")
+                        routeId: params.get("rota"),
+                        selectedRouteId: params.get("rota")
                     });
                     try {
                         this.getLinesPerClient(params.get("cliente"));
