@@ -12,12 +12,12 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                npm install
+                /usr/local/bin/npm install
             }
         }
         stage('Build') {
             steps {
-                npm run build
+                /usr/local/bin/npm run build
             }
         }
         stage('Test') {
