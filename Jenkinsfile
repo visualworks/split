@@ -28,7 +28,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read'
+                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read --profile jenkins'
             }
         }
     }
