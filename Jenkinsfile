@@ -13,12 +13,12 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                sh '/usr/local/bin/npm config ls && /usr/local/bin/npm install'
+                sh 'npm config ls && npm install'
             }
         }
         stage('Build') {
             steps {
-                /usr/local/bin/npm run build
+                sh 'npm run build'
             }
         }
         stage('Test') {
