@@ -12,12 +12,12 @@ pipeline {
     stages {
         stage("Install") {
             steps {
-                /usr/local/bin/npm install --unsafe-perm
+                npm install --unsafe-perm
             }
         }
         stage("Build") {
             steps {
-                /usr/local/bin/npm run build
+                npm run build
             }
         }
         stage("Test") {
