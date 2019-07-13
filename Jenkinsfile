@@ -1,5 +1,6 @@
 pipeline {
     agent any
+    tools {nodejs "node"}
     environment {
         // AWS_ACCESS_KEY_ID     = credentials("jenkins-aws-secret-key-id")
         // AWS_SECRET_ACCESS_KEY = credentials("jenkins-aws-secret-access-key")
@@ -12,7 +13,7 @@ pipeline {
     stages {
         stage('Install') {
             steps {
-                /usr/local/bin/npm install
+                sh '/usr/local/bin/npm config ls && /usr/local/bin/npm install'
             }
         }
         stage('Build') {
