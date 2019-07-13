@@ -32,6 +32,7 @@ pipeline {
                 sh "AWS_SECRET_ACCESS_KEY=$AWS_PSW"
                 sh "AWS_CONFIG_FILE=/home/ec2-user/.aws/config"
                 sh "AWS_SHARED_CREDENTIALS_FILE=/home/ec2-user/.aws/credentials"
+                sh "AWS_PROFILE=jenkins"
                 sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read --profile jenkins'
             }
         }
