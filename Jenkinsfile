@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "echo $PWD"
+                pwd()
                 sh "/home/ec2-user/node-v12.6.0-linux-x64/bin/npm install && /home/ec2-user/node-v12.6.0-linux-x64/bin/npm run build"
             }
         }
