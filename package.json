@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "env-cmd webpack-dev-server --config webpack.config.js --watch --progress --colors --mode development",
-    "build": "env-cmd webpack --config webpack.config.js --mode production",
+    "build": "webpack --config webpack.config.js --mode production",
     "test": "start-test"
   },
   "repository": {
