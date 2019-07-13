@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             steps {
                 pwd()
-                sh "/usr/local/bin/npm install && /usr/local/bin/npm run build"
+                sh "/usr/local/bin/npm install --unsafe-perm && /usr/local/bin/npm run build"
             }
         }
         stage('Test') {
