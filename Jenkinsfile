@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "npm install --unsafe-perm && npm run build"
+                sh "/var/lib/node/bin/npm install --unsafe-perm && /var/lib/node/bin/npm run build"
             }
         }
         stage('Test') {
