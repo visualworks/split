@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 pwd()
-                sh "sudo /usr/local/bin/npm install && sudo /usr/local/bin/npm run build"
+                sh "/usr/local/bin/npm install && /usr/local/bin/npm run build"
             }
         }
         stage('Test') {
