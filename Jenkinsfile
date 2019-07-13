@@ -12,7 +12,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                pwd()
+                sh "whoami >> /tmp/whoami.txt"
+                sh "pwd >> /tmp/whoami.txt"
                 sh "/usr/local/bin/npm install --unsafe-perm && /usr/local/bin/npm run build"
             }
         }
