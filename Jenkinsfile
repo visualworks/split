@@ -12,7 +12,7 @@ pipeline {
         stage('Build') {
             steps {
                 pwd()
-                sh "/home/ec2-user/node-v12.6.0-linux-x64/bin/npm install && /home/ec2-user/node-v12.6.0-linux-x64/bin/npm run build"
+                sh "sudo /usr/local/bin/npm install && sudo /usr/local/bin/npm run build"
             }
         }
         stage('Test') {
