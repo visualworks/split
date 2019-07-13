@@ -12,9 +12,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "whoami >> /tmp/whoami.txt"
-                sh "pwd >> /tmp/whoami.txt"
-                sh "/usr/local/bin/npm install --unsafe-perm && /usr/local/bin/npm run build"
+                sh "npm install --unsafe-perm && npm run build"
             }
         }
         stage('Test') {
