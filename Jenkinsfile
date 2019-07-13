@@ -10,20 +10,24 @@ pipeline {
         HOME                     = '.'
     }
     stages {
-        stage('Build') {
+        stage("Install") {
             steps {
-                sh "/var/lib/node/bin/npm install --unsafe-perm && /var/lib/node/bin/npm run build"
+                /usr/local/bin/npm install --unsafe-perm
             }
         }
-        stage('Test') {
+        stage("Build") {
             steps {
-                echo 'Testing..'
+                /usr/local/bin/npm run build
             }
         }
-        stage('Deploy') {
+        stage("Test") {
             steps {
-                echo 'Deploying....'
+                echo "Testing.."
             }
+        }
+        stage("Deploy") {
+            steps {
+                echo "Deploying...."
         }
     }
 }
