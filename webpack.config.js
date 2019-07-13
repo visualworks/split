@@ -7,7 +7,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     entry: "./src/index.js",
     output: {
-        path: path.resolve(__dirname, "dist/"),
+        path: path.resolve(__dirname, "dist"),
         filename: "index.js"
     },
     module: {
@@ -64,7 +64,6 @@ module.exports = {
         }
     },
     target: "web",
-    stats: "detailed",
     plugins: [
         new webpack.DefinePlugin({
             "process.env": {

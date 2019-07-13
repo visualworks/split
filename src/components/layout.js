@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React from "react";
 import App from "app";
 import Header from "components/header";
 import Content from "components/content";
@@ -32,7 +32,7 @@ export default class Layout extends App {
     setClient(event, clientId, clientName) {
         event.preventDefault();
         if (clientId) {
-            this.getLinesPerClient(clientId, clientName)
+            this.getLinesPerClient(clientId, clientName);
         }
     }
     doLogin(event, username, password) {
@@ -43,7 +43,7 @@ export default class Layout extends App {
             "passwd": password,
             "op": "authenticateUser"
         };
-        let response = myAuth.doPost(oBodyData).then((response) => {
+        myAuth.doPost(oBodyData).then((response) => {
             if (response.user && response.role) {
                 this.setState({
                     userId: 1,
@@ -53,7 +53,7 @@ export default class Layout extends App {
                 this.getClientList();
             } else {
                 alert(response.result);
-            }                
+            }
         });
     }
     doLogout(event) {
@@ -61,7 +61,7 @@ export default class Layout extends App {
         this.unsetVehiclesGarage();
         this.resetDefaultState();
     }
-    manageUsers(event) {
+    manageUsers() {
         this.setState({
             showUsersManagement: true
         });
@@ -87,7 +87,7 @@ export default class Layout extends App {
                     "op": "updateUser"
                 };
                 const myAuth = new Auth();
-                let response = myAuth.doPost(oBodyData).then((response) => {
+                myAuth.doPost(oBodyData).then((response) => {
                     if (response.result) {
                         alert(response.result);
                     }

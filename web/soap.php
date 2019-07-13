@@ -13,12 +13,12 @@ class WebService {
   protected $url = "http://ws.globalbus.com.br/wservice.asmx?wsdl";
   protected $method = "POST";
   protected $encoding = "UTF-8";
-  protected $usuario = "";
-  protected $senha = "";
-  protected $dbhost = "mysql.visualworks.com.br";
+  protected $usuario = getenv("GLOBALBUS_USER");
+  protected $senha = getenv("GLOBALBUS_PASS");
+  protected $dbhost = getenv("DB_HOST");
   protected $dbuser = "";
   protected $dbpass = "";
-  
+
   public function __construct(){
     $_POST = json_decode(file_get_contents('php://input'), true);
     if(isset($_GET["op"])){
@@ -53,7 +53,7 @@ class WebService {
     $conn = $this->getConnection();
     if($conn instanceof PDO) {
       try {
-        $stmt = $conn->prepare("SELECT CURRENT_USER()");
+	    $stmt = $conn->prepare("SELECT CURRENT_USER()");
         $stmt->execute();
         $current_user = $stmt->fetch(PDO::FETCH_OBJ);
         $str_column_name = "CURRENT_USER()";
@@ -67,10 +67,10 @@ class WebService {
         } else if (substr($result->{$str_column_name}, 0, 17) === "GRANT CREATE USER") {
           $role = "admin";
         }
-        $response = array(
-          "user" => $this->dbuser,
-          "role" => $role
-        );  
+    	$response = array(
+            "user" => $this->dbuser,
+            "role" => $role
+        );
       } catch (PDOException $error) {
         $response = array(
           "result" => $error->getMessage()
@@ -136,7 +136,7 @@ class WebService {
     $client = $this->_getSoapClient();
     $response = $client->ListaClientesPorUsuario(
       array(
-        "Id_Config" => 2,
+	    "Id_Config" => 2,
         "Usuario"   => $this->_getUsuario(),
         "Senha"     => $this->_getSenha()
       )
@@ -205,7 +205,7 @@ class WebService {
     $client = $this->_getSoapClient();
     $response = $client->ListaVeiculosProximos(
       array(
-        "Id_Config" => 2,
+	    "Id_Config" => 2,
         "Latitude"  => "double",
         "Longitude" => "double"
       )

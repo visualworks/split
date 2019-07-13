@@ -1,53 +1,52 @@
 {
-  "name": "zirix.com.br",
+  "name": "portaljal.com.br",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "env-cmd ./.env webpack-dev-server --config webpack.config.js --content-base dist/ --watch --progress --colors --mode development",
-    "build": "env-cmd ./.env webpack --config webpack.config.js --mode production",
+    "start": "env-cmd webpack-dev-server --config webpack.config.js --watch --progress --colors --mode development",
+    "build": "env-cmd webpack --config webpack.config.js --mode production",
     "test": "start-test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/henriquemattos/systemsat.git"
+    "url": "git+https://github.com/visualworks/portaljal.com.br.git"
   },
   "author": "Visual Works",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/henriquemattos/systemsat/issues"
+    "url": "https://github.com/visualworks/portaljal.com.br/issues"
   },
-  "homepage": "https://github.com/henriquemattos/systemsat#readme",
-  "dependencies": {
-    "bulma": "^0.7.1",
-    "copy-webpack-plugin": "^4.5.2",
-    "google-map-react": "^1.0.6",
-    "html-webpack-plugin": "^3.2.0"
-  },
+  "homepage": "https://github.com/visualworks/portaljal.com.br#readme",
+  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
+    "@babel/core": "^7.5.4",
+    "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "@fortawesome/fontawesome-free": "^5.3.1",
+    "@fortawesome/fontawesome-free": "^5.9.0",
     "@mapbox/point-geometry": "^0.1.0",
     "babel-cli": "^6.26.0",
-    "babel-loader": "^8.0.2",
+    "babel-loader": "^8.0.6",
     "babel-plugin-transform-react-constant-elements": "^6.23.0",
     "babel-plugin-transform-react-inline-elements": "^6.22.0",
     "babel-plugin-transform-react-jsx-compat": "^6.24.1",
     "babel-polyfill": "^6.26.0",
-    "css-loader": "^1.0.0",
-    "env-cmd": "^8.0.2",
-    "file-loader": "^2.0.0",
+    "bulma": "^0.7.5",
+    "copy-webpack-plugin": "^5.0.3",
+    "css-loader": "^3.0.0",
+    "env-cmd": "^9.0.3",
+    "file-loader": "^4.0.0",
     "font-awesome": "^4.7.0",
-    "node-sass": "^4.9.3",
-    "react": "^16.5.0",
-    "react-dom": "^16.5.0",
+    "google-map-react": "^1.1.4",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.12.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.0",
-    "uglifyjs-webpack-plugin": "^1.3.0",
-    "webpack": "^4.18.0",
-    "webpack-cli": "^3.1.0",
-    "webpack-dev-server": "^3.1.8"
+    "style-loader": "^0.23.1",
+    "uglifyjs-webpack-plugin": "^2.1.3",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
   }
 }
