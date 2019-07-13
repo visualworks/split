@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "npm install && npm run build"
+                sh "/usr/local/bin/npm install && /usr/local/bin/npm run build"
             }
         }
         stage('Test') {
