@@ -6,7 +6,7 @@ pipeline {
         MAP_ACCESS_KEY = credentials("jenkins-google-maps-access-key")
         GLOBALBUS      = credentials("jenkins-globalbus-user")
         DB_HOST        = credentials("jenkins-vw-database-host")
-        HOME           = '.'
+        HOME           = "."
     }
     stages {
         stage('Install') {
@@ -30,10 +30,12 @@ pipeline {
             steps {
                 sh "AWS_ACCESS_KEY_ID=$AWS_USR"
                 sh "AWS_SECRET_ACCESS_KEY=$AWS_PSW"
-                sh "AWS_CONFIG_FILE=/home/ec2-user/.aws/config"
-                sh "AWS_SHARED_CREDENTIALS_FILE=/home/ec2-user/.aws/credentials"
-                sh "AWS_PROFILE=jenkins"
-                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read'
+                sh "aws configure set profile jenkins"
+                sh "aws configure set access_key $AWS_ACCESS_KEY_ID --profile jenkins"
+                sh "aws configure set secret_key $AWS_SECRET_ACCESS_KEY --profile jenkins"
+                sh "aws configure set region us-east-1 --profile jenkins"
+                sh "aws configure set output json --profile jenkins"
+                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read --profile jenkins'
             }
         }
     }
