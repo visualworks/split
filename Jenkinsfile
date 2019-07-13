@@ -18,9 +18,6 @@ pipeline {
             steps {
                 sh "GLOBALBUS_USER=$GLOBALBUS_USR"
                 sh "GLOBALBUS_PASS=$GLOBALBUS_PSW"
-                sh "echo $MAP_ACCESS_KEY >> /tmp/accesskey.txt"
-                sh "echo $GLOBALBUS_USR >> /tmp/accesskey.txt"
-                sh "echo $GLOBALBUS_PSW >> /tmp/accesskey.txt"
                 sh "npm run build"
             }
         }
@@ -31,8 +28,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh "echo $WORKSPACE >> /tmp/accesskey.txt"
-                echo 'Deploying....'
+                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read'
             }
         }
     }
