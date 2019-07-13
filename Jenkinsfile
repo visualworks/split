@@ -13,6 +13,7 @@ pipeline {
         }
         stage('Build') {
             steps {
+                load "/tmp/portaljal.env"
                 sh 'npm run build'
             }
         }
