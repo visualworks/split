@@ -1,4 +1,11 @@
 {
+    "API_URL": "https://api.portaljal.com.br/v1",
+    "API_CLIENT_PER_USER": "/companies",
+    "API_LINES_PER_CLIENT": "/routes",
+    "API_VEHICLES_GARAGE": "/garage",
+    "API_ROUTES_PER_LINE": "/routes",
+    "API_REFERENCE_POINTS": "/references",
+    "API_VEHICLES_ROUTE": "/transit",
     "SOAP_URL": "https://www.portaljal.com.br/soap.php",
     "SOAP_OPERATOR": "op",
     "COL_CLIENT_PER_USER": "listaClientesPorUsuario",

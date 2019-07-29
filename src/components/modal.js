@@ -13,7 +13,7 @@ export default class Modal extends App {
         this.filterVehicles = this.filterVehicles.bind(this);
     }
     filterVehicles() {
-        let filteredList = []
+        let filteredList = [];
         if (this.input.value) {
             this.props.vehiclesGarageList.forEach((vehicles) => {
                 if (vehicles[this.select.value].toUpperCase().includes(this.input.value.toUpperCase())) {
@@ -38,10 +38,10 @@ export default class Modal extends App {
             if (this.state.vehiclesGarageList) {
                 vehiclesListRow.push(this.state.vehiclesGarageList.map((vehicle, index) => {
                     return <tr key={index}>
-                        <td>{vehicle.Identificacao}</td>
-                        <td>{vehicle.Descricao}</td>
-                        <td><a onClick={(e) => {this.locateVehicleGarage(e, vehicle)}}>{vehicle.Placa}</a></td>
-                        <td>{vehicle.Garagem}</td>
+                        <td>{vehicle.id}</td>
+                        <td>{vehicle.description}</td>
+                        <td><a onClick={(e) => {this.locateVehicleGarage(e, vehicle)}}>{vehicle.plate}</a></td>
+                        <td>{vehicle.garage}</td>
                     </tr>
                 }));
             }
@@ -60,10 +60,10 @@ export default class Modal extends App {
                             <p className="control">
                                 <span className="select">
                                     <select ref={ (select) => this.select = select }>
-                                        <option value="Descricao">pela descrição</option>
-                                        <option value="Placa">pela placa</option>
-                                        <option value="Identificacao">pela ID</option>
-                                        <option value="Garagem">pela garagem</option>
+                                        <option value="description" defaultValue={"description"}>pela descrição</option>
+                                        <option value="plate">pela placa</option>
+                                        <option value="id">pela ID</option>
+                                        <option value="garage">pela garagem</option>
                                     </select>
                                 </span>
                             </p>
