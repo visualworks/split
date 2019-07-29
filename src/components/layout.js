@@ -36,6 +36,9 @@ export default class Layout extends App {
         }
     }
     doLogin(event, username, password) {
+        this.setState({
+            showLoading: ""
+        });
         event.preventDefault();
         const myAuth = new Auth();
         let oBodyData = {
@@ -43,9 +46,6 @@ export default class Layout extends App {
             "passwd": password,
             "op": "authenticateUser"
         };
-        this.setState({
-            showLoading: ""
-        });
         myAuth.doPost(oBodyData).then((response) => {
             if (response.user && response.role) {
                 this.setState({
@@ -56,6 +56,9 @@ export default class Layout extends App {
                 });
                 this.getClientList();
             } else {
+                this.setState({
+                    showLoading: "is-hidden"
+                });
                 alert(response.result);
             }
         });
