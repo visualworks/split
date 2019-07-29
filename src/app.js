@@ -129,9 +129,9 @@ export default class App extends Component {
         });
         return clientList;
     }
-    getLinesPerClient(clientId, clientName) {
+    getLinesPerClient(clientId, clientName, resolve) {
         let linesList = [];
-        if (clientId && clientName) {
+        if (clientId) {
             this.setState({
                 clientId: clientId,
                 clientName: clientName,
@@ -156,6 +156,9 @@ export default class App extends Component {
                         showLoading: "is-hidden"
                     });
                     this.getRoutesPerLine(selectedLineId);
+                    if (resolve) {
+                        resolve();
+                    }
                     return linesList;
                 }
                 throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
@@ -320,10 +323,13 @@ export default class App extends Component {
                         selectedRouteId: params.get("rota")
                     });
                     try {
-                        this.getLinesPerClient(params.get("cliente"));
-                        this.getRoutesPerLine(params.get("linha"));
-                        this.getReferencePointsPerRoute(params.get("rota"));
-                        this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
+                        new Promise((resolve, reject) => {
+                            this.getLinesPerClient(params.get("cliente"), null, resolve);
+                        }).then(() => {
+                            // this.getRoutesPerLine(params.get("linha"));
+                            this.getReferencePointsPerRoute(params.get("rota"));
+                            this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
+                        });
                         this.setState({
                             isDirectLink: true
                         });
