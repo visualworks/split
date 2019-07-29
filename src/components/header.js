@@ -54,6 +54,12 @@ export default class Header extends App {
             });
         }
         let fnVeiculosGaragem = (event) => { this.showVehiclesGarage(event) };
+        const msgLoading = <div className={`navbar-item ${this.props.showLoading}`}>
+            <small>carregando</small>
+            <span className={"icon"}>
+                <i className={"fa fa-cog fa-spin"}></i>
+            </span>
+        </div>;
         const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={ fnVeiculosGaragem } className="navbar-item">Veículos na Garagem</a>;
         let fnDoLogout = (event) => { this.doLogout(event) };
         let btnLogin = <div className="navbar-item">
@@ -77,6 +83,7 @@ export default class Header extends App {
             </p>
         </div>;
         let loggedInMenu = <div className="navbar-end">
+            {msgLoading}
             {btnVeiculosGaragem}
             <div className="navbar-item has-dropdown is-hoverable">
                 <a className="navbar-link" href="javascript:void(null)">
@@ -100,6 +107,7 @@ export default class Header extends App {
             { (this.props.userRole === "admin") ? btnManageUsers : "" }
         </div>;
         let loggedOutMenu = <div className="navbar-end">
+            {msgLoading}
             {btnVeiculosGaragem}
             <div className="navbar-item">
                 <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus={true} />

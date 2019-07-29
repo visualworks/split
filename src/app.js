@@ -33,6 +33,7 @@ export default class App extends Component {
             showUsersManagement: false,
             showTrafficLayer: true,
             showTransitLayer: true,
+            showLoading: "is-hidden",
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false
@@ -74,7 +75,8 @@ export default class App extends Component {
         const wsVehiclesGarage = this.getAPIUrl(`${wsCollection}?configId=2`);
         let vehiclesGarageList = [];
         this.setState({
-            vehiclesGarageList: vehiclesGarageList
+            vehiclesGarageList: vehiclesGarageList,
+            showLoading: ""
         });
         fetch(wsVehiclesGarage).then((response) => {
             if (response.ok) {
@@ -86,7 +88,8 @@ export default class App extends Component {
                 vehiclesGarageList = json.body;
                 this.setState({
                     vehiclesGarageList: vehiclesGarageList,
-                    showVehiclesGarage: true
+                    showVehiclesGarage: true,
+                    showLoading: "is-hidden"
                 });
                 return vehiclesGarageList;
             }
@@ -97,13 +100,17 @@ export default class App extends Component {
     unsetVehiclesGarage() {
         this.setState({
             vehiclesGarageList: [],
-            showVehiclesGarage: false
+            showVehiclesGarage: false,
+            showLoading: "is-hidden"
         });
     }
     getClientList() {
         const wsCollection = this.state.CONST_MAPPINGS.COL_CLIENT_PER_USER;
         const wsClientPerUser = this.getSOAPUrl(wsCollection);
         let clientList = [];
+        this.setState({
+            showLoading: ""
+        });
         fetch(wsClientPerUser).then((response) => {
             if (response.ok) {
                 return response.json();
@@ -113,7 +120,8 @@ export default class App extends Component {
             if (json.ListaClientesPorUsuarioResult && json.ListaClientesPorUsuarioResult.hasOwnProperty("WSCliente")) {
                 clientList = json.ListaClientesPorUsuarioResult.WSCliente;
                 this.setState({
-                    clientList: clientList
+                    clientList: clientList,
+                    showLoading: "is-hidden"
                 });
                 return clientList;
             }
@@ -128,7 +136,8 @@ export default class App extends Component {
                 clientId: clientId,
                 clientName: clientName,
                 linesList: linesList,
-                selectedLineId: 0
+                selectedLineId: 0,
+                showLoading: ""
             });
             const wsColletion = this.state.CONST_MAPPINGS.COL_LINES_PER_CLIENT;
             let wsParams = {"clientId": clientId};
@@ -144,7 +153,8 @@ export default class App extends Component {
                     let selectedLineId = (linesList.Id_Linha) ? linesList.Id_Linha : linesList[0].Id_Linha;
                     this.setState({
                         linesList: linesList,
-                        selectedLineId: selectedLineId
+                        selectedLineId: selectedLineId,
+                        showLoading: "is-hidden"
                     });
                     this.getRoutesPerLine(selectedLineId);
                     return linesList;
@@ -159,7 +169,8 @@ export default class App extends Component {
         if (lineId) {
             this.setState({
                 selectedLineId: lineId,
-                routesList: routesList
+                routesList: routesList,
+                showLoading: ""
             });
             const wsCollection = this.state.CONST_MAPPINGS.COL_ROUTES_PER_LINE;
             let wsParams = {"linha": lineId};
@@ -176,7 +187,8 @@ export default class App extends Component {
                     if (!isDirectLink) {
                         this.setState({
                             routesList: routesList,
-                            selectedRouteId: (routesList.Id_Rota) ? routesList.Id_Rota : routesList[0].Id_Rota
+                            selectedRouteId: (routesList.Id_Rota) ? routesList.Id_Rota : routesList[0].Id_Rota,
+                            showLoading: "is-hidden"
                         });
                     }
                     return routesList;
@@ -196,7 +208,8 @@ export default class App extends Component {
         if (routeId) {
             this.setState({
                 selectedRouteId: routeId,
-                referencePointsList: referencePointsList
+                referencePointsList: referencePointsList,
+                showLoading: ""
             });
             const wsCollection = this.state.CONST_MAPPINGS.COL_REFERENCE_POINTS;
             let wsParams = {"routeId": routeId};
@@ -216,7 +229,8 @@ export default class App extends Component {
                             lat: referencePointsList[centerReference].Latitude,
                             lng: referencePointsList[centerReference].Longitude
                         },
-                        mapZoom: (referencePointsList.length > 15) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1
+                        mapZoom: (referencePointsList.length > 15) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1,
+                        showLoading: "is-hidden"
                     });
                     return referencePointsList;
                 } else {
@@ -247,7 +261,8 @@ export default class App extends Component {
         }
         this.setState({
             vehiclesInRoute: vehiclesInRoute,
-            intervalID: 0
+            intervalID: 0,
+            showLoading: ""
         });
         if (lineId, routeId) {
             const wsCollection = this.state.CONST_MAPPINGS.COL_VEHICLES_ROUTE;
@@ -268,13 +283,15 @@ export default class App extends Component {
                             }, 30000);
                             this.setState({
                                 vehiclesInRoute: vehiclesInRoute,
-                                intervalID: intervalID
+                                intervalID: intervalID,
+                                showLoading: "is-hidden"
                             });
                         }
                         let routePointsList = json.ListaVeiculosEmViagemResult.WSVeiculosViagem.PontosRota.WSPonto;
                         if (this.state.routePointsList !== routePointsList) {
                             this.setState({
-                                routePointsList: routePointsList
+                                routePointsList: routePointsList,
+                                showLoading: "is-hidden"
                             });
                             this.showRoutePoints();
                         }
@@ -311,7 +328,7 @@ export default class App extends Component {
             });
             this.state.routePolyline.setMap(maps);
         }
-	};
+	}
     loadDirectLink() {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
