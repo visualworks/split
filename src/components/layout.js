@@ -43,12 +43,16 @@ export default class Layout extends App {
             "passwd": password,
             "op": "authenticateUser"
         };
+        this.setState({
+            showLoading: ""
+        });
         myAuth.doPost(oBodyData).then((response) => {
             if (response.user && response.role) {
                 this.setState({
                     userId: 1,
                     userName: response.user,
-                    userRole: response.role
+                    userRole: response.role,
+                    showLoading: "is-hidden"
                 });
                 this.getClientList();
             } else {
