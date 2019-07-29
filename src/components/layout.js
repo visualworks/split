@@ -148,10 +148,10 @@ export default class Layout extends App {
         let optionLines = [];
         if (this.state.linesList.length > 1) {
             this.state.linesList.forEach((line, index) => {
-                optionLines.push(<option key={index} value={line.Id_Linha}>{"(" + line.Id_Linha + ") " + line.Numero} - {line.Nome}</option>);
+                optionLines.push(<option key={index} value={line.routeId}>{"(" + line.routeId + ") " + line.number} - {line.name}</option>);
             });
-        } else if (this.state.linesList.Id_Linha) {
-            optionLines.push(<option key={0} value={this.state.linesList.Id_Linha}>{"(" + this.state.linesList.Id_Linha + ") " + this.state.linesList.Numero} - {this.state.linesList.Nome}</option>);
+        } else if (this.state.linesList.routeId) {
+            optionLines.push(<option key={0} value={this.state.linesList.routeId}>{"(" + this.state.linesList.routeId + ") " + this.state.linesList.number} - {this.state.linesList.name}</option>);
         }
         return optionLines;
     }
@@ -165,10 +165,10 @@ export default class Layout extends App {
         let optionRoutes = [];
         if (this.state.routesList.length > 1) {
             this.state.routesList.forEach((route, index) => {
-                optionRoutes.push(<option key={index} value={route.Id_Rota}>{"(" + route.Id_Rota + ") " + route.Nome}</option>);
+                optionRoutes.push(<option key={index} value={route.directionId}>{"(" + route.directionId + ") " + route.name}</option>);
             });
-        } else if (this.state.routesList.Id_Rota) {
-            optionRoutes.push(<option key={0} value={this.state.routesList.Id_Rota}>{"(" + this.state.routesList.Id_Rota + ") " + this.state.routesList.Nome}</option>);
+        } else if (this.state.routesList.directionId) {
+            optionRoutes.push(<option key={0} value={this.state.routesList.directionId}>{"(" + this.state.routesList.directionId + ") " + this.state.routesList.name}</option>);
         }
         return optionRoutes;
     }

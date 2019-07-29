@@ -38,8 +38,8 @@ export default class Content extends App {
                 return (<a className="button is-small is-danger marker-reference-point" title={text} onClick={toggleText}><span className="icon"><i className="fa fa-map-pin"></i></span><span className="is-invisible"> {text}</span></a>);
             };
             this.props.referencePointsList.forEach((referencePoint, index) => {
-                if (typeof(referencePoint.Latitude) === "number" && typeof(referencePoint.Longitude) === "number") {
-                    this.referencePointsList.push(<ReferencePointMarker key={index} lat={referencePoint.Latitude} lng={referencePoint.Longitude} text={referencePoint.Nome} />);
+                if (typeof(parseFloat(referencePoint.latitude)) === "number" && typeof(parseFloat(referencePoint.longitude)) === "number") {
+                    this.referencePointsList.push(<ReferencePointMarker key={index} lat={parseFloat(referencePoint.latitude)} lng={parseFloat(referencePoint.longitude)} text={referencePoint.name} />);
                 }
             });
         }
@@ -48,7 +48,7 @@ export default class Content extends App {
         };
         if (this.props.vehiclesInRoute.length > 0) {
             this.props.vehiclesInRoute.forEach((vehicleInRoute, index) => {
-                this.vehiclesInRoute.push(<VehiclesInRouteMarker key={index} lat={vehicleInRoute.Latitude} lng={vehicleInRoute.Longitude} text={vehicleInRoute.Descricao} />)
+                this.vehiclesInRoute.push(<VehiclesInRouteMarker key={index} lat={parseFloat(vehicleInRoute.latitude)} lng={parseFloat(vehicleInRoute.longitude)} text={vehicleInRoute.description} />)
             });
         }
         let filterControls = <div id="overlayer-map">

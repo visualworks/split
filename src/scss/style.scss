@@ -8,6 +8,12 @@ $fa-font-path: "/fonts";
     margin-right: 30px;
 }
 
+.navbar-item .notification small {
+    padding-left: .5rem;
+    padding-bottom: .4rem;
+    vertical-align: middle;
+}
+
 #map {
     height: 90%;
     position: absolute;

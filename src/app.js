@@ -139,18 +139,17 @@ export default class App extends Component {
                 selectedLineId: 0,
                 showLoading: ""
             });
-            const wsColletion = this.state.CONST_MAPPINGS.COL_LINES_PER_CLIENT;
-            let wsParams = {"clientId": clientId};
-            const wsLinesPerClient = this.getSOAPUrl(wsColletion, wsParams);
+            const wsCollection = this.state.CONST_MAPPINGS.API_LINES_PER_CLIENT;
+            const wsLinesPerClient = this.getAPIUrl(`${wsCollection}?configId=2&companyId=${clientId}`);
             fetch(wsLinesPerClient).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK)
+                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
             }).then((json) => {
-                if (json.ListaLinhasClienteResult && json.ListaLinhasClienteResult.hasOwnProperty("WSLinha")) {
-                    linesList = json.ListaLinhasClienteResult.WSLinha;
-                    let selectedLineId = (linesList.Id_Linha) ? linesList.Id_Linha : linesList[0].Id_Linha;
+                if (json && json.hasOwnProperty("body")) {
+                    linesList = json.body;
+                    let selectedLineId = (linesList.routeId) ? linesList.routeId : linesList[0].routeId;
                     this.setState({
                         linesList: linesList,
                         selectedLineId: selectedLineId,
@@ -165,38 +164,15 @@ export default class App extends Component {
         return linesList;
     }
     getRoutesPerLine(lineId) {
-        let routesList = [];
-        if (lineId) {
-            this.setState({
-                selectedLineId: lineId,
-                routesList: routesList,
-                showLoading: ""
-            });
-            const wsCollection = this.state.CONST_MAPPINGS.COL_ROUTES_PER_LINE;
-            let wsParams = {"linha": lineId};
-            const wsRoutesPerLine = this.getSOAPUrl(wsCollection, wsParams);
-            fetch(wsRoutesPerLine).then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
-            }).then((json) => {
-                if (json.ListaRotasLinhaResult && json.ListaRotasLinhaResult.hasOwnProperty("WSRota")) {
-                    routesList = json.ListaRotasLinhaResult.WSRota;
-                    const isDirectLink = this.state.isDirectLink;
-                    if (!isDirectLink) {
-                        this.setState({
-                            routesList: routesList,
-                            selectedRouteId: (routesList.Id_Rota) ? routesList.Id_Rota : routesList[0].Id_Rota,
-                            showLoading: "is-hidden"
-                        });
-                    }
-                    return routesList;
-                }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
-            });
-        }
-        return routesList;
+        const route = this.state.linesList.find((line) => line.routeId === lineId);
+        const directions = route ? route.directions : [];
+        this.setState({
+            selectedLineId: lineId,
+            routesList: directions,
+            selectedRouteId: (directions.directionId) ? directions.directionId : directions[0].directionId,
+            showLoading: "is-hidden"
+        });
+        return directions;
     }
     getReferencePointsPerRoute(routeId) {
         let referencePointsList = [];
@@ -211,23 +187,22 @@ export default class App extends Component {
                 referencePointsList: referencePointsList,
                 showLoading: ""
             });
-            const wsCollection = this.state.CONST_MAPPINGS.COL_REFERENCE_POINTS;
-            let wsParams = {"routeId": routeId};
-            const wsReferencePoints = this.getSOAPUrl(wsCollection, wsParams);
+            const wsCollection = this.state.CONST_MAPPINGS.API_REFERENCE_POINTS;
+            const wsReferencePoints = this.getAPIUrl(`${wsCollection}?configId=2&directionId=${routeId}`);
             fetch(wsReferencePoints).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
                 throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
             }).then((json) => {
-                if (json.ListaPontosReferenciaRotaResult && json.ListaPontosReferenciaRotaResult.hasOwnProperty("WSPontoReferencia")) {
-                    referencePointsList = json.ListaPontosReferenciaRotaResult.WSPontoReferencia;
+                if (json && json.hasOwnProperty("body")) {
+                    referencePointsList = json.body;
                     let centerReference = Math.ceil(referencePointsList.length/2);
                     this.setState({
                         referencePointsList: referencePointsList,
                         mapCenter: {
-                            lat: referencePointsList[centerReference].Latitude,
-                            lng: referencePointsList[centerReference].Longitude
+                            lat: parseFloat(referencePointsList[centerReference].latitude),
+                            lng: parseFloat(referencePointsList[centerReference].longitude)
                         },
                         mapZoom: (referencePointsList.length > 15) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1,
                         showLoading: "is-hidden"
@@ -246,8 +221,8 @@ export default class App extends Component {
             let centerReference = Math.ceil(routePointsList.length/2);
             this.setState({
                 mapCenter: {
-                    lat: routePointsList[centerReference].Latitude,
-                    lng: routePointsList[centerReference].Longitude
+                    lat: parseFloat(routePointsList[centerReference].latitude),
+                    lng: parseFloat(routePointsList[centerReference].longitude)
                 },
                 mapZoom: (routePointsList.length > 10) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1
             });
@@ -265,18 +240,17 @@ export default class App extends Component {
             showLoading: ""
         });
         if (lineId, routeId) {
-            const wsCollection = this.state.CONST_MAPPINGS.COL_VEHICLES_ROUTE;
-            let wsParams = {"linha": lineId, "routeId": routeId};
-            const wsVehiclesInRoute = this.getSOAPUrl(wsCollection, wsParams);
+            const wsCollection = this.state.CONST_MAPPINGS.API_VEHICLES_ROUTE;
+            const wsVehiclesInRoute = this.getAPIUrl(`${wsCollection}?configId=2&routeId=${lineId}&directionId=${routeId}`);
             fetch(wsVehiclesInRoute).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
                 throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
             }).then((json) => {
-                if (json.ListaVeiculosEmViagemResult && json.ListaVeiculosEmViagemResult.hasOwnProperty("WSVeiculosViagem")) {
-                    if (json.ListaVeiculosEmViagemResult.WSVeiculosViagem.Veiculos.hasOwnProperty("WSVeiculo")) {
-                        vehiclesInRoute = json.ListaVeiculosEmViagemResult.WSVeiculosViagem.Veiculos.WSVeiculo;
+                if (json && json.hasOwnProperty("body")) {
+                    if (json.body.length > 0) {
+                        vehiclesInRoute = json.body[0].vehicles;
                         if (vehiclesInRoute.length > 0) {
                             let intervalID = setInterval(() => {
                                 this.getVehiclesInRoute(this.state.selectedLineId, this.state.selectedRouteId);
@@ -287,7 +261,7 @@ export default class App extends Component {
                                 showLoading: "is-hidden"
                             });
                         }
-                        let routePointsList = json.ListaVeiculosEmViagemResult.WSVeiculosViagem.PontosRota.WSPonto;
+                        let routePointsList = json.body[0].stops;
                         if (this.state.routePointsList !== routePointsList) {
                             this.setState({
                                 routePointsList: routePointsList,
@@ -309,8 +283,8 @@ export default class App extends Component {
         const routePointsList = this.state.routePointsList;
         if (routePointsList.length > 2) {
             const aWaypoints = routePointsList.map((reference) => ({
-                lat: reference.Latitude,
-                lng: reference.Longitude
+                lat: parseFloat(reference.latitude),
+                lng: parseFloat(reference.longitude)
             }));
             if (this.state.routePolyline) {
                 this.state.routePolyline.setMap(null);
