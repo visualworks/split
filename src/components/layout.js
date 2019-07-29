@@ -120,7 +120,7 @@ export default class Layout extends App {
             referencePointsList: [],
             vehiclesGarageList: [],
             vehiclesInRoute: [vehicle],
-            mapCenter: {lat: vehicle.Latitude, lng: vehicle.Longitude},
+            mapCenter: {lat: vehicle.latitude, lng: vehicle.longitude},
             mapZoom: 18
         });
     }

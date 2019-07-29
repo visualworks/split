@@ -54,6 +54,9 @@ export default class App extends Component {
         }
         return soapUrl;
     }
+    getAPIUrl(path) {
+        return `${this.state.CONST_MAPPINGS.API_URL}${path}`;
+    }
     showVehiclesGarage() {
         return this.state.showVehiclesGarage;
     }
@@ -67,8 +70,8 @@ export default class App extends Component {
         return this.state.clientName;
     }
     getVehiclesGarage() {
-        const wsCollection = this.state.CONST_MAPPINGS.COL_VEHICLES_GARAGE;
-        const wsVehiclesGarage = this.getSOAPUrl(wsCollection);
+        const wsCollection = this.state.CONST_MAPPINGS.API_VEHICLES_GARAGE;
+        const wsVehiclesGarage = this.getAPIUrl(`${wsCollection}?configId=2`);
         let vehiclesGarageList = [];
         this.setState({
             vehiclesGarageList: vehiclesGarageList
@@ -79,8 +82,8 @@ export default class App extends Component {
             }
             throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
         }).then((json) => {
-            if (json.ListaVeiculoGaragemResult && json.ListaVeiculoGaragemResult.hasOwnProperty("WSGaragem")) {
-                vehiclesGarageList = json.ListaVeiculoGaragemResult.WSGaragem;
+            if (json.body) {
+                vehiclesGarageList = json.body;
                 this.setState({
                     vehiclesGarageList: vehiclesGarageList,
                     showVehiclesGarage: true
@@ -327,7 +330,7 @@ export default class App extends Component {
                     });
                     try {
                         this.getLinesPerClient(params.get("cliente"));
-                        this.getRoutesPerLine(params.get("linha"))
+                        this.getRoutesPerLine(params.get("linha"));
                         this.getReferencePointsPerRoute(params.get("rota"));
                         this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
                         this.setState({
