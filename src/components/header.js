@@ -55,10 +55,12 @@ export default class Header extends App {
         }
         let fnVeiculosGaragem = (event) => { this.showVehiclesGarage(event) };
         const msgLoading = <div className={`navbar-item ${this.props.showLoading}`}>
-            <small>carregando</small>
-            <span className={"icon"}>
-                <i className={"fa fa-cog fa-spin"}></i>
-            </span>
+            <p className={"notification is-danger is-paddingless"}>
+                <small>carregando</small>
+                <span className={"icon"}>
+                    <i className={"fa fa-cog fa-spin"}></i>
+                </span>
+            </p>
         </div>;
         const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={ fnVeiculosGaragem } className="navbar-item">Veículos na Garagem</a>;
         let fnDoLogout = (event) => { this.doLogout(event) };
@@ -110,10 +112,10 @@ export default class Header extends App {
             {msgLoading}
             {btnVeiculosGaragem}
             <div className="navbar-item">
-                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus={true} />
+                <input ref={(username) => { this.username = username; }} className="input" type="text" placeholder="usuário" autoFocus={true} disabled={this.props.showLoading === "is-hidden" ? false : true } />
             </div>
             <div className="navbar-item">
-                <input ref={(password) => { this.password = password; }} onKeyPress={this._handleKeyPress} className="input" type="password" placeholder="senha" />
+                <input ref={(password) => { this.password = password; }} onKeyPress={this._handleKeyPress} className="input" type="password" placeholder="senha" disabled={this.props.showLoading === "is-hidden" ? false : true } />
             </div>
             <div className="navbar-item">
                 <p className="control">
