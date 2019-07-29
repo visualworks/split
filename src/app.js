@@ -105,8 +105,8 @@ export default class App extends Component {
         });
     }
     getClientList() {
-        const wsCollection = this.state.CONST_MAPPINGS.COL_CLIENT_PER_USER;
-        const wsClientPerUser = this.getSOAPUrl(wsCollection);
+        const wsCollection = this.state.CONST_MAPPINGS.API_CLIENT_PER_USER;
+        const wsClientPerUser = this.getAPIUrl(`${wsCollection}?configId=2`);
         let clientList = [];
         this.setState({
             showLoading: ""
@@ -117,8 +117,8 @@ export default class App extends Component {
             }
             throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK)
         }).then((json) => {
-            if (json.ListaClientesPorUsuarioResult && json.ListaClientesPorUsuarioResult.hasOwnProperty("WSCliente")) {
-                clientList = json.ListaClientesPorUsuarioResult.WSCliente;
+            if (json && json.hasOwnProperty("body")) {
+                clientList = json.body;
                 this.setState({
                     clientList: clientList,
                     showLoading: "is-hidden"
