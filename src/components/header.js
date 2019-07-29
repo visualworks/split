@@ -50,7 +50,7 @@ export default class Header extends App {
         let dropdown = [];
         if (this.props.clientList) {
             this.props.clientList.forEach((client, index) => {
-                dropdown.push(<a key={index} href={"#" + client.Nome} className="navbar-item" onClick={(event) => { this.setClient(event, client.Id_Cliente, client.Nome)}}>{"(" + client.Id_Cliente + ") "+ client.Nome}</a>)
+                dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={(event) => { this.setClient(event, client.clientId, client.name)}}>{"(" + client.clientId + ") "+ client.name}</a>)
             });
         }
         let fnVeiculosGaragem = (event) => { this.showVehiclesGarage(event) };
