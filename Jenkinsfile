@@ -27,6 +27,12 @@ pipeline {
             }
         }
         stage('Deploy') {
+            when {
+                allOf {
+                    environment name: 'CHANGE_ID', value: ''
+                    branch 'master'
+                }
+            }
             steps {
                 sh "AWS_ACCESS_KEY_ID=$AWS_USR"
                 sh "AWS_SECRET_ACCESS_KEY=$AWS_PSW"
