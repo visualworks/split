@@ -256,7 +256,7 @@ export default class App extends Component {
                         vehiclesInRoute = json.body[0].vehicles;
                         if (vehiclesInRoute.length > 0) {
                             let intervalID = setInterval(() => {
-                                this.getVehiclesInRoute(this.state.selectedLineId, this.state.selectedRouteId);
+                                this.getVehiclesInRoute(lineId, routeId);
                             }, 30000);
                             this.setState({
                                 vehiclesInRoute: vehiclesInRoute,
@@ -315,7 +315,8 @@ export default class App extends Component {
             });
             if (params.has("linha")) {
                 this.setState({
-                    lineId: params.get("linha")
+                    lineId: params.get("linha"),
+                    selectedLineId: params.get("linha")
                 });
                 if (params.has("rota")) {
                     this.setState({
