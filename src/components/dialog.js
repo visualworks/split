@@ -1,7 +1,6 @@
-import React, {Component} from "react";
-import App from "app";
+import React from "react";
 
-export default class Dialog extends App {
+export default class Dialog extends React.Component {
     constructor(props) {
         super(props);
         this.close = this.close.bind(this);

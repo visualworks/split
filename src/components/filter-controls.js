@@ -1,51 +1,30 @@
-import React, {Component} from "react";
-import App from "app";
+import React from "react";
 
-export default class FilterControls extends App {
+export default class FilterControls extends React.Component {
     constructor(props) {
         super(props);
     }
     render() {
-        let optionLines = this.props.getLines();
-        let optionRoutes = this.props.getRoutes();
+        let optionLines = this.props.controller.getLines();
+        let optionRoutes = this.props.controller.getRoutes();
         return (
             <div className="field is-horizontal">
                 <div className="control">
                     <div className="select is-rounded">
-                        <select value={this.props.selectedLineId} onChange={(event) => { this.props.changeLines(event) }}>
+                        <select value={this.props.selectedLineId} onChange={(event) => { this.props.controller.changeLines(event) }}>
                             {optionLines}
                         </select>
                     </div>
                 </div>
                 <div className="control">
                     <div className="select is-rounded">
-                        <select value={this.props.selectedRouteId} onChange={(event) => { this.props.changeRoutes(event) }}>
+                        <select value={this.props.selectedRouteId} onChange={(event) => { this.props.controller.changeRoutes(event) }}>
                             {optionRoutes}
                         </select>
                     </div>
                 </div>
                 <div className="control">
-                    <button type="button" className="button is-success" onClick={ (event) => { this.props.executeSearch(event) }}>Buscar</button>
-                </div>
-                <div className="control">
-                    <label className="checkbox">
-                        <input type="checkbox" ref={ (traffic) => this.traffic = traffic } onChange={ (event) => this.props.onChangeTraffic(this.traffic.checked) } checked={ this.props.showTrafficLayer } />
-                        Mostrar <a href="https://developers.google.com/maps/documentation/javascript/trafficlayer#traffic_layer" target="_blank">rotas de tráfego</a>
-                    </label>
-                </div>
-                <div className="control">
-                    <label className="checkbox">
-                        <input type="checkbox" ref={ (transit) => this.transit = transit } onChange={ (event) => this.props.onChangeTransit(this.transit.checked) } checked={ this.props.showTransitLayer } />
-                        Mostrar <a href="https://developers.google.com/maps/documentation/javascript/trafficlayer#transit_layer" target="_blank">trânsito</a>
-                    </label>
-                </div>
-                <div className="control">
-                    <div className="select is-rounded">
-                        <select name="mapTypeId" ref={ (mapType) => this.mapType = mapType } onChange={ (event) => this.props.onChangeMapType(this.mapType.value) }>
-                            <option value="roadmap">Mapa de Vias</option>
-                            <option value="satellite">Satélite</option>
-                        </select>
-                    </div>
+                    <button type="button" className="button is-success" onClick={ (event) => { this.props.controller.executeSearch(event) }}>Buscar</button>
                 </div>
             </div>
         );

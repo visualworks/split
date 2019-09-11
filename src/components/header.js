@@ -1,21 +1,15 @@
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
-import App from "app";
+import React from "react";
 
-export default class Header extends App {
+export default class Header extends React.Component {
     constructor(props){
         super(props);
-        this.setClient = props.setClient;
-        this.showVehiclesGarage = props.showVehiclesGarage;
-        this.doLogout = props.doLogout;
-        this.doLogin = props.doLogin;
-        this.manageUsers = props.manageUsers;
         this._handleKeyPress = this._handleKeyPress.bind(this);
         this.toggleMobileMenu = this.toggleMobileMenu.bind(this);
+        this.state = props.controller.state;
     }
     _handleKeyPress(event) {
         if (event.key === "Enter") {
-            this.doLogin(event, this.username.value, this.password.value);
+            this.props.controller.doLogin(event, this.username.value, this.password.value);
         }
     }
     toggleMobileMenu(event) {
@@ -50,11 +44,15 @@ export default class Header extends App {
         let dropdown = [];
         if (this.props.clientList) {
             this.props.clientList.forEach((client, index) => {
-                dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={(event) => { this.setClient(event, client.clientId, client.name)}}>{"(" + client.clientId + ") "+ client.name}</a>)
+                const onClick = (event) => {
+                    event.preventDefault();
+                    this.props.controller.setClient(event, client.clientId, client.name);
+                };
+                dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={onClick}>{"(" + client.clientId + ") "+ client.name}</a>)
             });
         }
-        let fnVeiculosGaragem = (event) => { this.showVehiclesGarage(event) };
-        const msgLoading = <div className={`navbar-item ${this.props.showLoading}`}>
+        let fnVeiculosGaragem = (event) => { this.props.controller.showVehiclesGarage(event) };
+        const msgLoading = <div className={`navbar-item ${ this.props.showLoading }`}>
             <p className={"notification is-danger is-paddingless"}>
                 <small>carregando</small>
                 <span className={"icon"}>
@@ -63,10 +61,13 @@ export default class Header extends App {
             </p>
         </div>;
         const btnVeiculosGaragem = <a href="#veiculos-garagem" onClick={ fnVeiculosGaragem } className="navbar-item">Veículos na Garagem</a>;
-        let fnDoLogout = (event) => { this.doLogout(event) };
+        let fnDoLogout = (event) => {
+            event.preventDefault();
+            this.props.controller.doLogout(event);
+        };
         let btnLogin = <div className="navbar-item">
             <p className="control">
-                <a href="javascript:void(null)" onClick={ fnDoLogout } className={(this.props.userId) ? "button is-danger" : "button is-success"}>
+                <a onClick={ fnDoLogout } className={(this.props.userId) ? "button is-danger" : "button is-success"}>
                 <span className="icon">
                     <i className="fa fa-unlock"></i>
                 </span>
@@ -74,10 +75,13 @@ export default class Header extends App {
                 </a>
             </p>
         </div>;
-        let fnManageUsers = (event) => { this.manageUsers(event) };
+        let fnManageUsers = (event) => {
+            event.preventDefault();
+            this.props.controller.manageUsers(event);
+        };
         let btnManageUsers = <div className="navbar-item">
             <p className="control">
-                <a href="javascript:void(null)" onClick={ fnManageUsers } className="button">
+                <a onClick={ fnManageUsers } className="button">
                     <span className="icon">
                         <i className="fa fa-users"></i>
                     </span>
@@ -88,22 +92,19 @@ export default class Header extends App {
             {msgLoading}
             {btnVeiculosGaragem}
             <div className="navbar-item has-dropdown is-hoverable">
-                <a className="navbar-link" href="javascript:void(null)">
-                    Clientes
-                </a>
+                <div className={"navbar-link"}>
+                    <p className="control">
+                        <span className={  (this.props.clientId) ? "button is-info" : "button is-warning" }>
+                            <span className="icon">
+                                <i className="fa fa-bus"></i>
+                            </span>
+                            <span>{"(" + this.props.clientId + ") " + this.props.clientName}</span>
+                        </span>
+                    </p>
+                </div>
                 <div className="navbar-dropdown is-boxed">
                     {dropdown}
                 </div>
-            </div>
-            <div className="navbar-item">
-                <p className="control">
-                    <a className={(this.props.clientId) ? "button is-info" : "button is-warning"} href="javascript:void(null)">
-                    <span className="icon">
-                        <i className="fa fa-bus"></i>
-                    </span>
-                    <span>{"(" + this.props.clientId + ") " + this.props.clientName}</span>
-                    </a>
-                </p>
             </div>
             { btnLogin }
             { (this.props.userRole === "admin") ? btnManageUsers : "" }
@@ -119,7 +120,7 @@ export default class Header extends App {
             </div>
             <div className="navbar-item">
                 <p className="control">
-                    <a href="javascript:void(null)" onClick={(event) => { this.doLogin(event, this.username.value, this.password.value); }}  className={(this.props.userId) ? "button is-danger" : "button is-success"}>
+                    <a onClick={(event) => { this.props.controller.doLogin(event, this.username.value, this.password.value); }}  className={(this.props.userId) ? "button is-danger" : "button is-success"}>
                     <span className="icon">
                         <i className="fa fa-lock"></i>
                     </span>
@@ -128,7 +129,7 @@ export default class Header extends App {
                 </p>
             </div>
         </div>;
-        let burgerMenu = <div data-target="navbar-display" ref={(btnNavBurger) => { this.btnNavBurger = btnNavBurger; }} className="burger navbar-burger" onClick={this.toggleMobileMenu}>
+        let burgerMenu = <div data-target="navbar-display" ref={(btnNavBurger) => { this.btnNavBurger = btnNavBurger; }} className="burger navbar-burger" onClick={ this.toggleMobileMenu }>
             <span></span>
             <span></span>
             <span></span>
@@ -137,7 +138,7 @@ export default class Header extends App {
         let navbar = <div className="navbar" role="navigation" aria-label="main-navigation">
             <div className="container">
                 <div className="navbar-brand">
-                    <a href="javascript:void(null)" className="navbar-item">
+                    <a className="navbar-item">
                         <img src="/img/logo-zirix.png" alt="Zirix Soluções em Rastreamento" title="Zirix Soluções em Rastreamento" className="logo"/>
                         <img src="/img/logo-jal.jpg" alt="Grupo JAL" title="Grupo JAL" className="logo" />
                     </a>
