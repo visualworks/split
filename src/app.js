@@ -1,9 +1,21 @@
-import React, {Component} from "react";
+import React from "react";
+import ReactDOM from "react-dom";
+import {Map, View} from 'ol';
+import {Vector as VectorLayer} from "ol/layer";
+import {Vector as VectorSource} from "ol/source";
+import Feature from "ol/Feature";
+import LineString from "ol/geom/LineString";
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+import {fromLonLat} from 'ol/proj';
+import {Style, Stroke} from 'ol/style';
+import Overlay from "ol/Overlay";
+import Auth from "auth";
+import Marker from "./components/marker";
 
-export default class App extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+export default class App {
+    static defaultState() {
+        return {
             clientId: 0,
             userId: 0,
             userName: "",
@@ -18,142 +30,158 @@ export default class App extends Component {
             routePointsList: [],
             vehiclesInRoute: [],
             map: {},
-            maps: {},
-            routePolyline: undefined,
-            mapCenter: {lat: -22.79575, lng: -43.36342},
-            mapZoom: 16,
-            mapTypeId: "satellite",
-            defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
-            defaultMapZoom: 16,
-            mapAccessKey: {
-                key: process.env.MAP_ACCESS_KEY
-            },
+            mapCenter: {lat: -22.9032, lng: -43.1729},
+            mapZoom: 13,
+            defaultMapCenter: {lat: -22.9032, lng: -43.1729},
+            defaultMapZoom: 13,
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             showUsersManagement: false,
             showTrafficLayer: true,
             showTransitLayer: true,
             showLoading: "is-hidden",
+            notification: {
+                type: "is-info",
+                message: "Hello World",
+                status: 0
+            },
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
             isDirectLink: false
         };
     }
-    getSOAPUrl(soapCollection, soapParams) {
-        let soapUrl = this.state.CONST_MAPPINGS.SOAP_URL;
-        if (soapCollection) {
-            const SOAP_OPERATOR = this.state.CONST_MAPPINGS.SOAP_OPERATOR;
-            soapUrl = soapUrl + "?" + SOAP_OPERATOR + "=" + soapCollection;
-            if (soapParams && typeof(soapParams) === "object") {
-                let urlParams = "";
-                Object.keys(soapParams).forEach((parameter, index) => {
-                    urlParams = urlParams + "&" + parameter + "=" + soapParams[parameter];
-                });
-                soapUrl = soapUrl + urlParams;
-            }
-            soapUrl = soapUrl + "&cache=" + Date.now(new Date());
-        }
-        return soapUrl;
+
+    constructor(component) {
+        this.component = component;
+        this.map = new Map({
+            size: ["100%", "100%"]
+        });
+        const source = new OSM();
+        const layer = new TileLayer({
+            source: source
+        });
+        this.map.addLayer(layer);
+        source.on("tileloadstart", (event) => this.component.state.showLoading = "");
+        source.on("tileloadend", (event) => this.component.state.showLoading = "is-hidden");
+        source.on("tileloaderror", (event) => console.log("tileloaderror", event));
+        this.map.setView(new View({
+            center: fromLonLat([this.component.state.mapCenter.lng, this.component.state.mapCenter.lat]),
+            zoom: this.component.state.mapZoom
+        }));
     }
+
     getAPIUrl(path) {
-        return `${this.state.CONST_MAPPINGS.API_URL}${path}`;
+        return `${this.component.state.CONST_MAPPINGS.API_URL}${path}`;
     }
+
     showVehiclesGarage() {
-        return this.state.showVehiclesGarage;
+        return this.component.state.showVehiclesGarage;
     }
-    getProgressBarSize() {
-        return this.state.progressBarSize;
-    }
-    getClientId() {
-        return this.state.clientId;
-    }
-    getClientName() {
-        return this.state.clientName;
-    }
+
     getVehiclesGarage() {
-        const wsCollection = this.state.CONST_MAPPINGS.API_VEHICLES_GARAGE;
+        const wsCollection = this.component.state.CONST_MAPPINGS.API_VEHICLES_GARAGE;
         const wsVehiclesGarage = this.getAPIUrl(`${wsCollection}?configId=2`);
         let vehiclesGarageList = [];
-        this.setState({
+        this.component.setState({
             vehiclesGarageList: vehiclesGarageList,
-            showLoading: ""
+            showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
         });
         fetch(wsVehiclesGarage).then((response) => {
             if (response.ok) {
                 return response.json();
             }
-            throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
+            throw new Error(response);
         }).then((json) => {
             if (json.body) {
                 vehiclesGarageList = json.body;
-                this.setState({
+                this.component.setState({
                     vehiclesGarageList: vehiclesGarageList,
                     showVehiclesGarage: true,
-                    showLoading: "is-hidden"
+                    showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
                 });
                 return vehiclesGarageList;
             }
-            throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
+            this.component.setState({
+                notification: {
+                    type: "is-danger",
+                    message: this.component.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED,
+                    code: 500
+                }
+            });
+            const error = this.component.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED;
+            this.showNotification(response, "is-danger", error, 500);
+            // throw new Error(error);
+        }).catch((response) => {
+            const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
+            this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
         });
         return vehiclesGarageList;
     }
+
     unsetVehiclesGarage() {
-        this.setState({
+        this.component.setState({
             vehiclesGarageList: [],
             showVehiclesGarage: false,
             showLoading: "is-hidden"
         });
     }
+
     getClientList() {
-        const wsCollection = this.state.CONST_MAPPINGS.API_CLIENT_PER_USER;
+        const wsCollection = this.component.state.CONST_MAPPINGS.API_CLIENT_PER_USER;
         const wsClientPerUser = this.getAPIUrl(`${wsCollection}?configId=2`);
         let clientList = [];
-        this.setState({
-            showLoading: ""
+        this.component.setState({
+            showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
         });
         fetch(wsClientPerUser).then((response) => {
             if (response.ok) {
                 return response.json();
             }
-            throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK)
+            throw new Error(response);
         }).then((json) => {
             if (json && json.hasOwnProperty("body")) {
                 clientList = json.body;
-                this.setState({
+                this.component.setState({
                     clientList: clientList,
-                    showLoading: "is-hidden"
+                    showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
                 });
                 return clientList;
             }
-            throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
+            const error = this.component.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED;
+            this.showNotification(json, "is-danger", error, 500);
+            // throw new Error(error);
+        }).catch((response) => {
+            const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
+            this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
         });
         return clientList;
     }
+
     getLinesPerClient(clientId, clientName, resolve) {
         let linesList = [];
         if (clientId) {
-            this.setState({
+            this.component.setState({
                 clientId: clientId,
                 clientName: clientName,
                 linesList: linesList,
                 selectedLineId: 0,
-                showLoading: ""
+                showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
             });
-            const wsCollection = this.state.CONST_MAPPINGS.API_LINES_PER_CLIENT;
+            const wsCollection = this.component.state.CONST_MAPPINGS.API_LINES_PER_CLIENT;
             const wsLinesPerClient = this.getAPIUrl(`${wsCollection}?configId=2&companyId=${clientId}`);
             fetch(wsLinesPerClient).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
+                throw new Error(response);
             }).then((json) => {
                 if (json && json.hasOwnProperty("body")) {
                     linesList = json.body;
                     let selectedLineId = (linesList.routeId) ? linesList.routeId : linesList[0].routeId;
-                    this.setState({
+                    this.component.setState({
                         linesList: linesList,
                         selectedLineId: selectedLineId,
-                        showLoading: "is-hidden"
+                        showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
                     });
                     this.getRoutesPerLine(selectedLineId);
                     if (resolve) {
@@ -161,241 +189,543 @@ export default class App extends Component {
                     }
                     return linesList;
                 }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED);
+                const error = this.component.state.CONST_MAPPINGS.RESPONSE_DATA_CHANGED;
+                this.showNotification(json, "is-danger", error, 500);
+                // throw new Error(error);
+                if (resolve) {
+                    resolve(undefined);
+                }
+            }).catch((response) => {
+                const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
+                this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
             });
         }
         return linesList;
     }
+
     getRoutesPerLine(lineId) {
-        const route = this.state.linesList.find((line) => line.routeId === lineId);
+        const route = this.component.state.linesList.find((line) => line.routeId === lineId);
         const directions = route ? route.directions : [];
-        this.setState({
+        this.component.setState({
             selectedLineId: lineId,
             routesList: directions,
             selectedRouteId: (directions.directionId) ? directions.directionId : directions[0].directionId,
-            showLoading: "is-hidden"
+            showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
         });
         return directions;
     }
-    getReferencePointsPerRoute(routeId) {
+
+    getReferencePointsPerRoute(routeId, resolve) {
         let referencePointsList = [];
-        const maps = this.state.maps;
-        if (maps && typeof(maps.DirectionsRenderer) === "function") {
-            const directionsDisplay = new maps.DirectionsRenderer();
-            directionsDisplay.setMap(null);
-        }
         if (routeId) {
-            this.setState({
-                selectedRouteId: routeId,
-                referencePointsList: referencePointsList,
-                showLoading: ""
-            });
-            const wsCollection = this.state.CONST_MAPPINGS.API_REFERENCE_POINTS;
+            const wsCollection = this.component.state.CONST_MAPPINGS.API_REFERENCE_POINTS;
             const wsReferencePoints = this.getAPIUrl(`${wsCollection}?configId=2&directionId=${routeId}`);
             fetch(wsReferencePoints).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
+                throw new Error(response);
             }).then((json) => {
                 if (json && json.hasOwnProperty("body")) {
                     referencePointsList = json.body;
-                    let centerReference = Math.ceil(referencePointsList.length/2);
-                    this.setState({
-                        referencePointsList: referencePointsList,
-                        mapCenter: {
-                            lat: parseFloat(referencePointsList[centerReference].latitude),
-                            lng: parseFloat(referencePointsList[centerReference].longitude)
-                        },
-                        mapZoom: (referencePointsList.length > 15) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1,
-                        showLoading: "is-hidden"
-                    });
+                    if (resolve) {
+                        resolve(referencePointsList);
+                    }
                     return referencePointsList;
                 } else {
-                    throw new Error(this.state.CONST_MAPPINGS.REFERENCE_POINTS_NOT_FOUND);
+                    const error = this.component.state.CONST_MAPPINGS.REFERENCE_POINTS_NOT_FOUND;
+                    this.showNotification(json, "is-danger", error, 500);
+                    if (resolve) {
+                        resolve(undefined);
+                    }
+                    throw new Error(error);
                 }
+            }).catch((response) => {
+                const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
+                this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
             });
         }
         return referencePointsList;
     }
-    showRoutePoints() {
-        const routePointsList = this.state.routePointsList;
-        if (routePointsList.length > 0) {
-            let centerReference = Math.ceil(routePointsList.length/2);
-            this.setState({
-                mapCenter: {
-                    lat: parseFloat(routePointsList[centerReference].latitude),
-                    lng: parseFloat(routePointsList[centerReference].longitude)
-                },
-                mapZoom: (routePointsList.length > 10) ? this.state.defaultMapZoom - 3 : this.state.defaultMapZoom + 1
-            });
-            this.showRoute();
-        }
+
+    _centerMap(routePointsList) {
+        const middlePoint = Math.ceil(routePointsList.length / 2);
+        const center = this.getMarkerPosition(routePointsList[middlePoint]);
+        this.map.getView().setCenter(center);
+        const zoom = routePointsList.length > 300 ? this.component.state.defaultMapZoom : this.component.state.defaultMapZoom + 2;
+        this.map.getView().setZoom(zoom);
     }
-    getVehiclesInRoute(lineId, routeId) {
+
+    getMarkerPosition(marker) {
+        return fromLonLat([parseFloat(marker.longitude), parseFloat(marker.latitude)]);
+    }
+
+    getVehiclesInRoute(lineId, routeId, resolve) {
         let vehiclesInRoute = [];
-        if (this.state.intervalID > 0) {
-            clearInterval(this.state.intervalID);
-        }
-        this.setState({
-            vehiclesInRoute: vehiclesInRoute,
-            intervalID: 0,
-            showLoading: ""
-        });
-        if (lineId, routeId) {
-            const wsCollection = this.state.CONST_MAPPINGS.API_VEHICLES_ROUTE;
+        let routePointsList = this.component.state.routePointsList || [];
+        if (lineId && routeId) {
+            const wsCollection = this.component.state.CONST_MAPPINGS.API_VEHICLES_ROUTE;
             const wsVehiclesInRoute = this.getAPIUrl(`${wsCollection}?configId=2&routeId=${lineId}&directionId=${routeId}`);
             fetch(wsVehiclesInRoute).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
-                throw new Error(this.state.CONST_MAPPINGS.RESPONSE_NOT_OK);
+                throw new Error(response);
             }).then((json) => {
                 if (json && json.hasOwnProperty("body")) {
+                    let nextState = {};
                     if (json.body.length > 0) {
-                        vehiclesInRoute = json.body[0].vehicles;
-                        if (vehiclesInRoute.length > 0) {
-                            let intervalID = setInterval(() => {
-                                this.getVehiclesInRoute(lineId, routeId);
+                        nextState.vehiclesInRoute = json.body[0].vehicles;
+                        if (nextState.vehiclesInRoute.length > 0 && this.component.state.intervalID === 0) {
+                            nextState.intervalID = setInterval(() => {
+                                this.executeSearch();
                             }, 30000);
-                            this.setState({
-                                vehiclesInRoute: vehiclesInRoute,
-                                intervalID: intervalID,
-                                showLoading: "is-hidden"
-                            });
                         }
-                        let routePointsList = json.body[0].stops;
-                        if (this.state.routePointsList !== routePointsList) {
-                            this.setState({
-                                routePointsList: routePointsList,
-                                showLoading: "is-hidden"
-                            });
-                            this.showRoutePoints();
+                        if (JSON.stringify(routePointsList) !== JSON.stringify(json.body[0].stops)) {
+                            nextState.routePointsList = json.body[0].stops;
                         }
+                    }
+                    if (resolve) {
+                        resolve(nextState);
                     }
                     return vehiclesInRoute;
                 } else {
-                    throw new Error(this.state.CONST_MAPPINGS.VEHICLES_IN_ROUTE_NOT_FOUND);
+                    const error = this.component.state.CONST_MAPPINGS.VEHICLES_IN_ROUTE_NOT_FOUND;
+                    this.showNotification(json, "is-danger", error, 404);
+                    if (resolve) {
+                        resolve(undefined);
+                    }
                 }
+            }).catch((response) => {
+                const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
+                this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
             });
         }
         return vehiclesInRoute;
     }
-    showRoute() {
-        const maps = this.state.map;
-        const routePointsList = this.state.routePointsList;
+
+    showRoute(routePointsList) {
         if (routePointsList.length > 2) {
-            const aWaypoints = routePointsList.map((reference) => ({
-                lat: parseFloat(reference.latitude),
-                lng: parseFloat(reference.longitude)
+            const aWaypoints = routePointsList.map((reference) => ([
+                parseFloat(reference.longitude),
+                parseFloat(reference.latitude)
+            ]));
+            const geometryLines = new LineString(aWaypoints).transform("EPSG:4326", "EPSG:3857");
+            const vectorFeature = new Feature({
+                geometry: geometryLines,
+                name: "Route Line",
+                id: "RouteLine"
+            });
+            vectorFeature.setStyle(new Style({
+                stroke: new Stroke({
+                    color: "#209cee",
+                    width: 7
+                })
             }));
-            if (this.state.routePolyline) {
-                this.state.routePolyline.setMap(null);
-                this.state.routePolyline.setPath([]);
-            }
-            const routePolyline = new google.maps.Polyline({
-                path: aWaypoints,
-                geodesic: true,
-                strokeColor: '#209cee',
-                strokeOpacity: 1.0,
-                strokeWeight: 5
+            const layerLines = new VectorLayer({
+                source: new VectorSource({
+                    features: [vectorFeature]
+                })
             });
-            this.setState({
-                routePolyline: routePolyline
-            });
-            this.state.routePolyline.setMap(maps);
+            this.map.addLayer(layerLines);
+            this._centerMap(routePointsList);
         }
-	}
-    loadDirectLink() {
+    }
+
+    checkDirectLink() {
         const url = new URL(window.location.href);
         const params = new URLSearchParams(url.search);
-        if (params.has("cliente")) {
-            this.setState({
-                clientId: params.get("cliente")
-            });
-            if (params.has("linha")) {
-                this.setState({
-                    lineId: params.get("linha"),
-                    selectedLineId: params.get("linha")
-                });
-                if (params.has("rota")) {
-                    this.setState({
-                        routeId: params.get("rota"),
-                        selectedRouteId: params.get("rota")
-                    });
-                    try {
-                        new Promise((resolve, reject) => {
-                            this.getLinesPerClient(params.get("cliente"), null, resolve);
-                        }).then(() => {
-                            // this.getRoutesPerLine(params.get("linha"));
-                            this.getReferencePointsPerRoute(params.get("rota"));
-                            this.getVehiclesInRoute(params.get("linha"), params.get("rota"));
-                        });
-                        this.setState({
-                            isDirectLink: true
-                        });
-                    } catch (error) {
-                        alert(`${this.state.CONST_MAPPINGS.LOAD_DIRECT_LINK_FAILED} ${error}`);
-                        throw new Error(`${this.state.CONST_MAPPINGS.LOAD_DIRECT_LINK_FAILED} ${error}`);
-                    }
-                } else {
-                    alert(this.state.CONST_MAPPINGS.ID_ROUTE_NOT_FOUND);
-                    throw new Error(this.state.CONST_MAPPINGS.ID_ROUTE_NOT_FOUND);
-                }
-            } else {
-                alert(this.state.CONST_MAPPINGS.ID_LINE_NOT_FOUND);
-                throw new Error(this.state.CONST_MAPPINGS.ID_LINE_NOT_FOUND);
+        if (params.has("cliente") && params.has("linha") && params.has("rota")) {
+            return {
+                isDirectLink: true,
+                clientId: params.get("cliente"),
+                lineId: params.get("linha"),
+                selectedLineId: params.get("linha"),
+                routeId: params.get("rota"),
+                selectedRouteId: params.get("rota")
+            };
+        }
+        return {};
+    }
+
+    loadDirectLink() {
+        if (this.component.state.isDirectLink) {
+            try {
+                this.executeSearch();
+            } catch (error) {
+                const errorMessage = `${this.component.state.CONST_MAPPINGS.LOAD_DIRECT_LINK_FAILED} ${error}`;
+                this.showNotification({}, "is-danger", errorMessage, 500);
+                // throw new Error(errorMessage);
             }
         }
     }
-    getDefaultMapCenter() {
-        return this.state.defaultMapCenter;
-    }
-    getDefaultMapZoom() {
-        return this.state.defaultMapZoom;
-    }
-    getMapAccessKeys() {
-        return this.state.mapAccessKey;
-    }
+
     resetDefaultState() {
-        const maps = this.state.maps;
-        if (maps && typeof(maps.DirectionsRenderer) === "function") {
-            const directionsDisplay = new maps.DirectionsRenderer();
-            directionsDisplay.setMap(null);
+        this.component.setState(App.defaultState());
+    }
+
+    /* ##########################################
+        Layout.js
+     */
+    setClient(event, clientId, clientName) {
+        if (event) {
+            event.preventDefault();
         }
-        this.setState({
-            clientId: 0,
-            userId: 0,
-            userName: "",
-            userRole: "",
-            clientName: "Escolha um cliente",
-            clientList: [],
-            linesList: [],
+        if (clientId) {
+            this.getLinesPerClient(clientId, clientName);
+            localStorage.setItem("clientId", clientId);
+            localStorage.setItem("clientName", clientName);
+        }
+    }
+
+    doLogin(event, username, password) {
+        this.component.setState({
+            showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
+        });
+        event.preventDefault();
+        const myAuth = new Auth();
+        let oBodyData = {
+            "user": username,
+            "passwd": password,
+            "op": "authenticateUser"
+        };
+        myAuth.doPost(oBodyData).then((response) => {
+            if (response.user && response.role) {
+                const userInfo = {
+                    userId: 1,
+                    userName: response.user,
+                    userRole: response.role
+                };
+                localStorage.setItem("userId", userInfo.userId);
+                localStorage.setItem("userName", userInfo.userName);
+                localStorage.setItem("userRole", userInfo.userRole);
+                this.component.setState(userInfo);
+                this.getClientList();
+            } else {
+                this.showNotification({}, "is-danger", response.result, 500);
+                // throw new Error(response.result);
+            }
+            this.component.setState({
+                showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
+            });
+        });
+    }
+
+    doLogout(event) {
+        event.preventDefault();
+        this.unsetVehiclesGarage();
+        this.resetDefaultState();
+        localStorage.removeItem("userId");
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("clientId");
+        localStorage.removeItem("clientName");
+    }
+
+    checkUserSession() {
+        if (localStorage.getItem("userName") && this.component.state.userName === "") {
+            this.component.setState({
+                userId: localStorage.getItem("userId"),
+                userName: localStorage.getItem("userName"),
+                userRole: localStorage.getItem("userRole")
+            });
+            this.getClientList();
+            if (localStorage.getItem("clientId") && this.component.state.clientId === 0) {
+                this.component.setState({
+                    clientId: localStorage.getItem("clientId"),
+                    clientName: localStorage.getItem("clientName")
+                });
+                this.setClient(null, localStorage.getItem("clientId"), localStorage.getItem("clientName"));
+            }
+        }
+    }
+
+    manageUsers() {
+        this.component.setState({
+            showUsersManagement: true
+        });
+    }
+
+    showNotification(response, type = "is-warning", message = "", status = 0) {
+        this.onCloseNotification();
+        console.error(response);
+        this.component.setState({
+            showLoading: "is-hidden",
+            notification: {
+                type: type,
+                message: message,
+                status: status || parseInt(response.status)
+            }
+        });
+    }
+
+    onCloseNotification(event) {
+        if (event) {
+            event.preventDefault();
+        }
+        this.component.setState({
+            showLoading: "is-hidden",
+            notification: {
+                type: "is-info",
+                message: "Hello World",
+                status: 0
+            }
+        });
+    }
+
+    onCloseDialog() {
+        this.component.setState({
+            showUsersManagement: false
+        });
+    }
+
+    onSubmitForm(user, passwd, rePasswd, adminUser, adminPasswd) {
+        if (passwd !== rePasswd) {
+            alert("Senha e Confirmação de Senha não são idênticas.");
+        } else if (this.component.state.userRole !== "admin") {
+            alert("Seu usuário não tem permissões para esta função.");
+        } else {
+            try {
+                let oBodyData = {
+                    "user": user,
+                    "passwd": passwd,
+                    "adminUser": adminUser,
+                    "adminPasswd": adminPasswd,
+                    "rePasswd": rePasswd,
+                    "op": "updateUser"
+                };
+                const myAuth = new Auth();
+                myAuth.doPost(oBodyData).then((response) => {
+                    if (response.result) {
+                        this.showNotification(response, "is-danger", response.result, 500);
+                        // throw new Error(response.result);
+                    }
+                });
+            } catch (e) {
+                this.showNotification(e, "is-danger", e, 500);
+                // throw new Error(e);
+            }
+        }
+        // adminUser, user, passwd, rePasswd, adminPasswd
+    }
+
+    showVehiclesGarage(event) {
+        event.preventDefault();
+        this.component.setState({
+            showLoading: ""
+        });
+        this.getVehiclesGarage();
+    }
+
+    hideVehiclesGarage(event) {
+        event.preventDefault();
+        this.component.setState({
+            showLoading: "is-hidden"
+        });
+        this.unsetVehiclesGarage();
+    }
+
+    locateVehicleGarage(event, vehicle) {
+        this.hideVehiclesGarage(event);
+        if (this.component.state.intervalID > 0) {
+            clearInterval(this.component.state.intervalID);
+            this.component.setState({
+                intervalID: 0
+            });
+        }
+        this.component.setState({
             selectedLineId: 0,
-            routesList: [],
             selectedRouteId: 0,
             referencePointsList: [],
-            routePointsList: [],
-            vehiclesInRoute: [],
-            map: {},
-            maps: {},
-            routePolyline: undefined,
-            mapCenter: {lat: -22.79575, lng: -43.36342},
-            mapZoom: 16,
-            mapTypeId: "satellite",
-            defaultMapCenter: {lat: -22.79575, lng:  -43.36342},
-            defaultMapZoom: 16,
-            mapAccessKey: {
-                key: process.env.MAP_ACCESS_KEY
-            },
             vehiclesGarageList: [],
-            showVehiclesGarage: false,
-            showUsersManagement: false,
-            showTrafficLayer: true,
-            showTransitLayer: true,
-            intervalID: 0,
-            CONST_MAPPINGS: require("const.json"),
-            isDirectLink: false
+            vehiclesInRoute: [vehicle],
+            mapCenter: {lat: vehicle.latitude, lng: vehicle.longitude},
+            mapZoom: 18
         });
+    }
+
+    changeLines(event) {
+        let selectedLineId = event.target.value;
+        this.component.setState({
+            selectedLineId: selectedLineId
+        });
+        this.getRoutesPerLine(selectedLineId);
+    }
+
+    getLines() {
+        let optionLines = [];
+        if (this.component.state.linesList.length > 1) {
+            this.component.state.linesList.forEach((line, index) => {
+                optionLines.push(<option key={index}
+                                         value={line.routeId}>{"(" + line.routeId + ") " + line.number} - {line.name}</option>);
+            });
+        } else if (this.component.state.linesList.routeId) {
+            optionLines.push(<option key={0}
+                                     value={this.component.state.linesList.routeId}>{"(" + this.component.state.linesList.routeId + ") " + this.component.state.linesList.number} - {this.component.state.linesList.name}</option>);
+        }
+        return optionLines;
+    }
+
+    changeRoutes(event) {
+        let selectedRouteId = event.target.value;
+        this.component.setState({
+            selectedRouteId: selectedRouteId
+        });
+    }
+
+    getRoutes() {
+        let optionRoutes = [];
+        if (this.component.state.routesList.length > 1) {
+            this.component.state.routesList.forEach((route, index) => {
+                optionRoutes.push(<option key={index}
+                                          value={route.directionId}>{"(" + route.directionId + ") " + route.name}</option>);
+            });
+        } else if (this.component.state.routesList.directionId) {
+            optionRoutes.push(<option key={0}
+                                      value={this.component.state.routesList.directionId}>{"(" + this.component.state.routesList.directionId + ") " + this.component.state.routesList.name}</option>);
+        }
+        return optionRoutes;
+    }
+
+    executeSearch(event) {
+        if (event) {
+            event.preventDefault();
+        }
+        const isNewSearch = Boolean(event && event.type);
+        const loadingState = {
+            showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
+        };
+        if (isNewSearch) {
+            clearInterval(this.component.state.intervalID);
+            loadingState.intervalID = 0;
+            loadingState.notification = {
+                type: "is-info",
+                message: "Hello World",
+                status: 0
+            };
+            ReactDOM.unmountComponentAtNode(document.getElementById("vehiclesInRoute"));
+            ReactDOM.unmountComponentAtNode(document.getElementById("referencePoints"));
+            if (this.map.getOverlays().getArray().length > 0) {
+                this.map.getOverlays().clear();
+            }
+            if (this.map.getLayers()) {
+                this.map.getLayers().forEach((layer) => {
+                    if (layer.getType() === "VECTOR") {
+                        this.map.removeLayer(layer);
+                    }
+                });
+            }
+        }
+        this.component.setState(loadingState);
+        const loadingData = new Promise((resolve) => {
+            if (isNewSearch || this.component.state.isDirectLink || this.component.state.referencePointsList.length === 0) {
+                return this.getReferencePointsPerRoute(this.component.state.selectedRouteId, resolve)
+            } else {
+                resolve(this.component.state.referencePointsList);
+            }
+        });
+        loadingData.then((referencePointsList) => {
+            let newState = {};
+            if ((isNewSearch || this.component.state.isDirectLink) && referencePointsList.length > 0) {
+                newState.referencePointsList = referencePointsList;
+            }
+            let nextProps = {
+                vehiclesInRoute: [],
+                routePointsList: this.component.state.routePointsList,
+                showLoading: !this.component.state.showLoading ? "is-hidden" : this.component.state.showLoading
+            };
+            nextProps = Object.assign(nextProps, newState);
+            const loadVehiclesInRoute = new Promise((resolve) => {
+                return this.getVehiclesInRoute(this.component.state.selectedLineId, this.component.state.selectedRouteId, resolve);
+            });
+            loadVehiclesInRoute.then((vehicleProps) => {
+                const finalState = Object.assign(nextProps, vehicleProps);
+                this.component.setState(finalState);
+                this.createAndRenderMarkers(finalState, isNewSearch);
+                if (isNewSearch || this.component.state.isDirectLink) {
+                    this.showRoute(finalState.routePointsList);
+                }
+                const overlaysVehiclesInRoute = (finalState.vehiclesInRoute || []).map(this.createOverlay.bind(this));
+                const overlaysReferencePoints = (finalState.referencePointsList || []).map(this.createOverlay.bind(this));
+                return overlaysReferencePoints.concat(overlaysVehiclesInRoute);
+            }).then((overlays) => {
+                overlays.forEach((overlay) => {
+                    const markerId = overlay.getId().substr(8, overlay.getId().length);
+                    if (document.getElementById(markerId)) {
+                        overlay.setElement(document.getElementById(markerId));
+                        this.map.addOverlay(overlay);
+                    } else {
+                        console.log("markerId not found", markerId);
+                    }
+                });
+            });
+        });
+    }
+    createOverlay(marker, index) {
+        let markerId = "";
+        if (marker.vehicleId) {
+            markerId =`vehicleId-${marker.vehicleId}-${index}`
+        } else if (marker.referenceId) {
+            markerId = `referenceId-${marker.referenceId}-${index}`;
+        }
+        return new Overlay({
+            autoPan: true,
+            id: `overlay-${markerId}`,
+            position: this.getMarkerPosition(marker),
+            positioning: "center-left",
+            stopEvent: false
+        });
+    }
+    createAndRenderMarkers(finalState, isNewSearch) {
+        const vehiclesInRouteMarkers = (finalState.vehiclesInRoute || []).map(this.createMarkersVehicles.bind(this));
+        const vehiclesElement = React.createElement("div", {}, ...vehiclesInRouteMarkers);
+        ReactDOM.render(vehiclesElement, document.getElementById("vehiclesInRoute"));
+        if (isNewSearch) {
+            const referencePointsMarkers = (finalState.referencePointsList || []).map(this.createMarkersReferencePoint.bind(this));
+            const referencesElement = React.createElement("div", {}, ...referencePointsMarkers);
+            ReactDOM.render(referencesElement, document.getElementById("referencePoints"));
+        }
+    }
+    createMarkersVehicles(marker, index) {
+        const markerId = `vehicleId-${marker.vehicleId}-${index}`;
+        const props = {
+            key: markerId,
+            markerId: markerId,
+            iconStyle: "fa-bus",
+            buttonStyle: "button is-small is-primary is-rounded marker-vehicles-route",
+            description: marker.description
+        };
+        return React.createElement(Marker, {...props});
+    }
+    createMarkersReferencePoint(marker, index) {
+        const markerId = `referenceId-${marker.referenceId}-${index}`;
+        const toggleReferencePointName = (event) => {
+            let target;
+            switch (event.target.classList[0]) {
+                case "fa":
+                    target = event.target.parentNode.parentNode.childNodes[1];
+                    break;
+                case "icon":
+                    target = event.target.parentNode.childNodes[1];
+                    break;
+                case "button":
+                    target = event.target.childNodes[1];
+                    break;
+            }
+            if (target && target.classList) {
+                target.classList.toggle("is-invisible");
+            }
+            event.preventDefault();
+        };
+        const props = {
+            key: markerId,
+            markerId: markerId,
+            iconStyle: "fa-map-pin",
+            buttonStyle: "button is-small is-danger marker-reference-point",
+            description: marker.name,
+            descriptionStyle: "is-invisible",
+            onClick: toggleReferencePointName
+        };
+        return React.createElement(Marker, { ...props});
     }
 }

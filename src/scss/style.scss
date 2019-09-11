@@ -1,3 +1,4 @@
+@import "node_modules/ol/ol";
 // $fa-font-path: "//use.fontawesome.com/releases/v5.1.0/fonts";
 $fa-font-path: "/fonts";
 @import "node_modules/font-awesome/scss/font-awesome";
@@ -14,8 +15,10 @@ $fa-font-path: "/fonts";
     vertical-align: middle;
 }
 
-#map {
+#map, .map, .map .ol-viewport, .map .ol-viewport canvas {
+    display: block;
     height: 90%;
+    min-height: 90%;
     position: absolute;
     width: 100%;
     z-index: 1;
@@ -67,4 +70,13 @@ $fa-font-path: "/fonts";
 
 .marker-vehicles-route {
     z-index: 890;
+}
+
+footer {
+    bottom: 60px;
+    display: block;
+    height: 30px;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
 }
