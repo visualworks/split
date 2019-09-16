@@ -24,7 +24,7 @@ export default class Layout extends React.Component {
 
     render() {
         return (
-            <div className="layout">
+            <div>
                 <Header controller={this.app} showLoading={this.state.showLoading}
                         isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName}
                         userRole={this.state.userRole} clientId={this.state.clientId} clientName={this.state.clientName}

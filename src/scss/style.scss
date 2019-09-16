@@ -25,25 +25,9 @@ $fa-font-path: "/fonts";
 }
 
 #overlayer-map {
-    background-color: #ededede6;
-    border: 1px solid #ccc;
-    height: auto;
-    margin-top: 10px;
-    margin-left: 10px;
-    overflow: hidden;
-    padding: 20px;
+    margin-top: 1rem;
     position: absolute;
-    width: auto;
-    max-width: 100%;
     z-index: 2;
-}
-
-#overlayer-map .field .control {
-    margin-right: 10px;
-}
-
-#overlay-map .checkbox {
-    vertical-align: middle;
 }
 
 .icon-marker {

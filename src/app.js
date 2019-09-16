@@ -553,17 +553,11 @@ export default class App {
     }
 
     getLines() {
-        let optionLines = [];
-        if (this.component.state.linesList.length > 1) {
-            this.component.state.linesList.forEach((line, index) => {
-                optionLines.push(<option key={index}
-                                         value={line.routeId}>{"(" + line.routeId + ") " + line.number} - {line.name}</option>);
-            });
-        } else if (this.component.state.linesList.routeId) {
-            optionLines.push(<option key={0}
-                                     value={this.component.state.linesList.routeId}>{"(" + this.component.state.linesList.routeId + ") " + this.component.state.linesList.number} - {this.component.state.linesList.name}</option>);
-        }
-        return optionLines;
+        const lineList = this.component.state.linesList;
+        return (lineList.routeId || lineList).map((line, index) => {
+            return (<option key={index}
+                    value={line.routeId} title={line.number}>{line.name}</option>);
+        });
     }
 
     changeRoutes(event) {
@@ -574,17 +568,12 @@ export default class App {
     }
 
     getRoutes() {
-        let optionRoutes = [];
-        if (this.component.state.routesList.length > 1) {
-            this.component.state.routesList.forEach((route, index) => {
-                optionRoutes.push(<option key={index}
-                                          value={route.directionId}>{"(" + route.directionId + ") " + route.name}</option>);
-            });
-        } else if (this.component.state.routesList.directionId) {
-            optionRoutes.push(<option key={0}
-                                      value={this.component.state.routesList.directionId}>{"(" + this.component.state.routesList.directionId + ") " + this.component.state.routesList.name}</option>);
-        }
-        return optionRoutes;
+        const routeList = this.component.state.routesList;
+        return (routeList.directionId || routeList).map((route, index) => {
+            return (<option key={index}
+                            value={route.directionId} title={route.number}>{route.name}</option>);
+        });
+        return routeList;
     }
 
     executeSearch(event) {
