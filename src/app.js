@@ -607,7 +607,7 @@ export default class App {
         }
         this.component.setState(loadingState);
         const loadingData = new Promise((resolve) => {
-            if (isNewSearch || this.component.state.isDirectLink || this.component.state.referencePointsList.length === 0) {
+            if (isNewSearch || (this.component.state.isDirectLink && this.component.state.referencePointsList.length === 0)) {
                 return this.getReferencePointsPerRoute(this.component.state.selectedRouteId, resolve)
             } else {
                 resolve(this.component.state.referencePointsList);
@@ -630,7 +630,8 @@ export default class App {
             loadVehiclesInRoute.then((vehicleProps) => {
                 const finalState = Object.assign(nextProps, vehicleProps);
                 this.component.setState(finalState);
-                this.createAndRenderMarkers(finalState, isNewSearch);
+                const isNewSearchOrDirectLink = isNewSearch === true || this.component.state.isDirectLink === true || false;
+                this.createAndRenderMarkers(finalState, isNewSearchOrDirectLink);
                 if (isNewSearch || this.component.state.isDirectLink) {
                     this.showRoute(finalState.routePointsList);
                 }
@@ -665,11 +666,11 @@ export default class App {
             stopEvent: false
         });
     }
-    createAndRenderMarkers(finalState, isNewSearch) {
+    createAndRenderMarkers(finalState, isNewSearchOrDirectLink) {
         const vehiclesInRouteMarkers = (finalState.vehiclesInRoute || []).map(this.createMarkersVehicles.bind(this));
         const vehiclesElement = React.createElement("div", {}, ...vehiclesInRouteMarkers);
         ReactDOM.render(vehiclesElement, document.getElementById("vehiclesInRoute"));
-        if (isNewSearch) {
+        if (isNewSearchOrDirectLink) {
             const referencePointsMarkers = (finalState.referencePointsList || []).map(this.createMarkersReferencePoint.bind(this));
             const referencesElement = React.createElement("div", {}, ...referencePointsMarkers);
             ReactDOM.render(referencesElement, document.getElementById("referencePoints"));
