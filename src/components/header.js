@@ -44,11 +44,13 @@ export default class Header extends React.Component {
         let dropdown = [];
         if (this.props.clientList) {
             this.props.clientList.forEach((client, index) => {
-                const onClick = (event) => {
-                    event.preventDefault();
-                    this.props.controller.setClient(event, client.clientId, client.name);
-                };
-                dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={onClick}>{"(" + client.clientId + ") "+ client.name}</a>)
+                if (client.name !== "Brazinha" && client.name !== "Planalto") {
+                    const onClick = (event) => {
+                        event.preventDefault();
+                        this.props.controller.setClient(event, client.clientId, client.name);
+                    };
+                    dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={onClick} title={`(${client.clientId}) ${client.name}`}>{client.name}</a>)
+                }
             });
         }
         let fnVeiculosGaragem = (event) => { this.props.controller.showVehiclesGarage(event) };
@@ -98,7 +100,7 @@ export default class Header extends React.Component {
                             <span className="icon">
                                 <i className="fa fa-bus"></i>
                             </span>
-                            <span>{"(" + this.props.clientId + ") " + this.props.clientName}</span>
+                            <span>{this.props.clientName}</span>
                         </span>
                     </p>
                 </div>
