@@ -243,6 +243,9 @@ export default class App {
             }).catch((response) => {
                 const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
                 this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
+                if (this.component.state.isDirectLink) {
+                    this.executeSearch();
+                }
             });
         }
         return referencePointsList;
@@ -299,6 +302,9 @@ export default class App {
             }).catch((response) => {
                 const error = this.component.state.CONST_MAPPINGS.RESPONSE_NOT_OK;
                 this.showNotification(response, "is-danger", `${error}: ${response}`, 500);
+                if (this.component.state.isDirectLink) {
+                    this.executeSearch();
+                }
             });
         }
         return vehiclesInRoute;
@@ -556,7 +562,7 @@ export default class App {
         const lineList = this.component.state.linesList;
         return (lineList.routeId || lineList).map((line, index) => {
             return (<option key={index}
-                    value={line.routeId} title={line.number}>{line.name}</option>);
+                            value={line.routeId} title={line.number}>{line.name}</option>);
         });
     }
 
@@ -584,7 +590,7 @@ export default class App {
         const loadingState = {
             showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
         };
-        if (isNewSearch) {
+        if (isNewSearch || this.component.state.isDirectLink) {
             clearInterval(this.component.state.intervalID);
             loadingState.intervalID = 0;
             loadingState.notification = {
@@ -592,22 +598,10 @@ export default class App {
                 message: "Hello World",
                 status: 0
             };
-            ReactDOM.unmountComponentAtNode(document.getElementById("vehiclesInRoute"));
-            ReactDOM.unmountComponentAtNode(document.getElementById("referencePoints"));
-            if (this.map.getOverlays().getArray().length > 0) {
-                this.map.getOverlays().clear();
-            }
-            if (this.map.getLayers()) {
-                this.map.getLayers().forEach((layer) => {
-                    if (layer.getType() === "VECTOR") {
-                        this.map.removeLayer(layer);
-                    }
-                });
-            }
         }
         this.component.setState(loadingState);
         const loadingData = new Promise((resolve) => {
-            if (isNewSearch || this.component.state.isDirectLink || this.component.state.referencePointsList.length === 0) {
+            if (isNewSearch || (this.component.state.isDirectLink && this.component.state.referencePointsList.length === 0)) {
                 return this.getReferencePointsPerRoute(this.component.state.selectedRouteId, resolve)
             } else {
                 resolve(this.component.state.referencePointsList);
@@ -628,9 +622,24 @@ export default class App {
                 return this.getVehiclesInRoute(this.component.state.selectedLineId, this.component.state.selectedRouteId, resolve);
             });
             loadVehiclesInRoute.then((vehicleProps) => {
+                ReactDOM.unmountComponentAtNode(document.getElementById("vehiclesInRoute"));
+                ReactDOM.unmountComponentAtNode(document.getElementById("referencePoints"));
+                this.map.getOverlays().clear();
+                if (isNewSearch) {
+                    if (this.map.getLayers()) {
+                        this.map.getLayers().forEach((layer) => {
+                            if (layer.getType() === "VECTOR") {
+                                this.map.removeLayer(layer);
+                            }
+                        });
+                    }
+                }
+                return vehicleProps;
+            }).then((vehicleProps) => {
                 const finalState = Object.assign(nextProps, vehicleProps);
                 this.component.setState(finalState);
-                this.createAndRenderMarkers(finalState, isNewSearch);
+                const isNewSearchOrDirectLink = isNewSearch === true || this.component.state.isDirectLink === true || false;
+                this.createAndRenderMarkers(finalState, isNewSearchOrDirectLink);
                 if (isNewSearch || this.component.state.isDirectLink) {
                     this.showRoute(finalState.routePointsList);
                 }
@@ -650,10 +659,11 @@ export default class App {
             });
         });
     }
+
     createOverlay(marker, index) {
         let markerId = "";
         if (marker.vehicleId) {
-            markerId =`vehicleId-${marker.vehicleId}-${index}`
+            markerId = `vehicleId-${marker.vehicleId}-${index}`
         } else if (marker.referenceId) {
             markerId = `referenceId-${marker.referenceId}-${index}`;
         }
@@ -665,16 +675,18 @@ export default class App {
             stopEvent: false
         });
     }
-    createAndRenderMarkers(finalState, isNewSearch) {
+
+    createAndRenderMarkers(finalState, isNewSearchOrDirectLink) {
         const vehiclesInRouteMarkers = (finalState.vehiclesInRoute || []).map(this.createMarkersVehicles.bind(this));
         const vehiclesElement = React.createElement("div", {}, ...vehiclesInRouteMarkers);
         ReactDOM.render(vehiclesElement, document.getElementById("vehiclesInRoute"));
-        if (isNewSearch) {
+        if (isNewSearchOrDirectLink) {
             const referencePointsMarkers = (finalState.referencePointsList || []).map(this.createMarkersReferencePoint.bind(this));
             const referencesElement = React.createElement("div", {}, ...referencePointsMarkers);
             ReactDOM.render(referencesElement, document.getElementById("referencePoints"));
         }
     }
+
     createMarkersVehicles(marker, index) {
         const markerId = `vehicleId-${marker.vehicleId}-${index}`;
         const props = {
@@ -686,6 +698,7 @@ export default class App {
         };
         return React.createElement(Marker, {...props});
     }
+
     createMarkersReferencePoint(marker, index) {
         const markerId = `referenceId-${marker.referenceId}-${index}`;
         const toggleReferencePointName = (event) => {
@@ -715,6 +728,6 @@ export default class App {
             descriptionStyle: "is-invisible",
             onClick: toggleReferencePointName
         };
-        return React.createElement(Marker, { ...props});
+        return React.createElement(Marker, {...props});
     }
 }
