@@ -42,8 +42,8 @@ pipeline {
                 sh "aws configure set aws_secret_access_key $AWS_PSW --profile jenkins"
                 sh "aws configure set region us-east-1 --profile jenkins"
                 sh "aws configure set output json --profile jenkins"
-                sh "aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read --profile jenkins"
-                sh "aws cloudfront create-invalidation --distribution-id $DISTRIBUTION"
+                sh 'aws s3 sync $WORKSPACE/dist/ s3://portaljal.com.br --include="*" --acl=public-read --profile jenkins'
+                sh 'aws cloudfront create-invalidation --distribution-id $DISTRIBUTION --path "/*.*"'
             }
         }
     }
