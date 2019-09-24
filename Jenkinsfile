@@ -4,7 +4,6 @@ pipeline {
     environment {
         AWS            = credentials("aws-s3")
         GLOBALBUS      = credentials("jenkins-globalbus-user")
-        DB_HOST        = credentials("jenkins-vw-database-host")
         HOME           = "."
     }
     stages {
