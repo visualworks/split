@@ -532,6 +532,8 @@ export default class App {
     }
 
     locateVehicleGarage(event, vehicle) {
+        ReactDOM.unmountComponentAtNode(document.getElementById("vehiclesInRoute"));
+        this.map.getOverlays().clear();
         this.hideVehiclesGarage(event);
         if (this.component.state.intervalID > 0) {
             clearInterval(this.component.state.intervalID);
@@ -544,10 +546,16 @@ export default class App {
             selectedRouteId: 0,
             referencePointsList: [],
             vehiclesGarageList: [],
-            vehiclesInRoute: [vehicle],
-            mapCenter: {lat: vehicle.latitude, lng: vehicle.longitude},
-            mapZoom: 18
+            vehiclesInRoute: [vehicle]
         });
+        const marker = this.createMarkersVehicles(vehicle, 0);
+        const overlay = this.createOverlay(vehicle, 0);
+        const vehiclesElement = React.createElement("div", {}, marker);
+        ReactDOM.render(vehiclesElement, document.getElementById("vehiclesInRoute"));
+        overlay.setElement(document.getElementById(`vehicleId-${vehicle.id}-0`));
+        this.map.addOverlay(overlay);
+        this.map.getView().setCenter(this.getMarkerPosition(vehicle));
+        this.map.getView().setZoom(18);
     }
 
     changeLines(event) {
@@ -662,8 +670,8 @@ export default class App {
 
     createOverlay(marker, index) {
         let markerId = "";
-        if (marker.vehicleId) {
-            markerId = `vehicleId-${marker.vehicleId}-${index}`
+        if (marker.vehicleId || marker.id) {
+            markerId = `vehicleId-${marker.vehicleId || marker.id}-${index}`
         } else if (marker.referenceId) {
             markerId = `referenceId-${marker.referenceId}-${index}`;
         }
@@ -688,7 +696,7 @@ export default class App {
     }
 
     createMarkersVehicles(marker, index) {
-        const markerId = `vehicleId-${marker.vehicleId}-${index}`;
+        const markerId = `vehicleId-${marker.vehicleId || marker.id}-${index}`;
         const props = {
             key: markerId,
             markerId: markerId,
