@@ -65,11 +65,6 @@ module.exports = {
     },
     target: "web",
     plugins: [
-        new webpack.DefinePlugin({
-            "process.env": {
-                MAP_ACCESS_KEY: JSON.stringify(process.env.MAP_ACCESS_KEY)
-            }
-        }),
         new UglifyJsPlugin(),
         new HTMLWebpackPlugin({
             title: "Portal JAL - Aonde está o ônibus?!",

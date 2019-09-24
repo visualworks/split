@@ -3,9 +3,7 @@ pipeline {
     tools {nodejs "node"}
     environment {
         AWS            = credentials("aws-s3")
-        MAP_ACCESS_KEY = credentials("jenkins-google-maps-access-key")
         GLOBALBUS      = credentials("jenkins-globalbus-user")
-        DB_HOST        = credentials("jenkins-vw-database-host")
         HOME           = "."
     }
     stages {
