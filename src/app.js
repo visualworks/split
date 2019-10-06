@@ -47,8 +47,15 @@ export default class App {
             },
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
-            isDirectLink: false
+            isDirectLink: false,
+            isMobile: false
         };
+    }
+
+    static isResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        const isTablet = window.innerWidth >= 769 && window.innerWidth <= 1023;
+        return isMobile || isTablet;
     }
 
     constructor(component) {

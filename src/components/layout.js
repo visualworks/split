@@ -12,6 +12,7 @@ export default class Layout extends React.Component {
         this.state = App.defaultState();
         this.app = new App(this);
         const stateDirectLink = this.app.checkDirectLink();
+        this.state.isMobile = App.isResponsive();
         this.state = Object.assign(this.state, stateDirectLink);
     }
 
@@ -25,7 +26,7 @@ export default class Layout extends React.Component {
     render() {
         return (
             <div>
-                <Header controller={this.app} showLoading={this.state.showLoading}
+                <Header controller={this.app} isMobile={this.state.isMobile} showLoading={this.state.showLoading}
                         isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName}
                         userRole={this.state.userRole} clientId={this.state.clientId} clientName={this.state.clientName}
                         clientList={this.state.clientList}/>
