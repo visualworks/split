@@ -23,8 +23,8 @@ export default class Modal extends React.Component {
     createListItem(vehicle, index) {
         this.vehiclesListRow.push(
             <tr key={index}>
-                <td>{vehicle.id}</td>
-                <td>{vehicle.description}</td>
+                <td className={"is-hidden-mobile"}>{vehicle.id}</td>
+                <td className={"is-hidden-mobile"}>{vehicle.description}</td>
                 <td><a onClick={(e) => {
                     this.props.controller.locateVehicleGarage(e, vehicle)
                 }}>{vehicle.plate}</a></td>
@@ -66,8 +66,8 @@ export default class Modal extends React.Component {
                         <table className="table is-striped is-fullwidth is-narrow is-hoverable">
                             <thead>
                                 <tr>
-                                    <th nowrap="nowrap">ID</th>
-                                    <th nowrap="nowrap">Descrição</th>
+                                    <th className={"is-hidden-mobile"} nowrap="nowrap">ID</th>
+                                    <th className={"is-hidden-mobile"} nowrap="nowrap">Descrição</th>
                                     <th nowrap="nowrap">Placa</th>
                                     <th nowrap="nowrap">Garagem</th>
                                 </tr>

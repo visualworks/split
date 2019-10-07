@@ -47,8 +47,15 @@ export default class App {
             },
             intervalID: 0,
             CONST_MAPPINGS: require("const.json"),
-            isDirectLink: false
+            isDirectLink: false,
+            isMobile: false
         };
+    }
+
+    static isResponsive() {
+        const isMobile = window.innerWidth <= 768;
+        const isTablet = window.innerWidth >= 769 && window.innerWidth <= 1023;
+        return isMobile || isTablet;
     }
 
     constructor(component) {
@@ -636,7 +643,7 @@ export default class App {
                 if (isNewSearch) {
                     if (this.map.getLayers()) {
                         this.map.getLayers().forEach((layer) => {
-                            if (layer.getType() === "VECTOR") {
+                            if (layer.hasOwnProperty("getType") && layer.getType() === "VECTOR") {
                                 this.map.removeLayer(layer);
                             }
                         });

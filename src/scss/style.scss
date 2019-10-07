@@ -1,9 +1,5 @@
-@import "node_modules/ol/ol";
-// $fa-font-path: "//use.fontawesome.com/releases/v5.1.0/fonts";
-$fa-font-path: "/fonts";
-@import "node_modules/font-awesome/scss/font-awesome";
-
-@import "node_modules/bulma/bulma";
+@import "ol/ol";
+@import "bulma/bulma";
 
 .navbar-brand .navbar-item img.logo:first-child {
     margin-right: 30px;
@@ -24,8 +20,14 @@ $fa-font-path: "/fonts";
     z-index: 1;
 }
 
+.ol-zoom {
+    bottom: 5rem;
+    top: auto;
+}
+
 #overlayer-map {
-    margin-top: 1rem;
+    margin-top: .7rem;
+    max-width: 100%;
     position: absolute;
     z-index: 2;
 }
@@ -56,7 +58,7 @@ $fa-font-path: "/fonts";
     z-index: 890;
 }
 
-footer {
+footer.notification-footer {
     bottom: 60px;
     display: block;
     height: 30px;
