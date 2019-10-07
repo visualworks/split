@@ -30,7 +30,7 @@ export default class Layout extends React.Component {
                         isDirectLink={this.state.isDirectLink} userId={this.state.userId} userName={this.state.userName}
                         userRole={this.state.userRole} clientId={this.state.clientId} clientName={this.state.clientName}
                         clientList={this.state.clientList}/>
-                <Content controller={this.app} isDirectLink={this.state.isDirectLink}
+                <Content controller={this.app} isMobile={this.state.isMobile} isDirectLink={this.state.isDirectLink}
                          vehiclesInRoute={this.state.vehiclesInRoute} routePointsList={this.state.routePointsList}
                          referencePointsList={this.state.referencePointsList} clientId={this.state.clientId}
                          linesList={this.state.linesList} selectedLineId={this.state.selectedLineId}

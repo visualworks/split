@@ -37,9 +37,6 @@ export default class Header extends React.Component {
     }
 
     doLogin(event) {
-        if (this.props.isMobile) {
-            this.toggleMobileMenu();
-        }
         this.props.controller.doLogin(event, this.username.value, this.password.value);
     }
 
@@ -75,15 +72,16 @@ export default class Header extends React.Component {
         if (this.props.clientList) {
             this.props.clientList.forEach((client, index) => {
                 if (client.name !== "Brazinha" && client.name !== "Planalto") {
-                    const onClick = (event) => {
+                    const fnSelectCompany = (event) => {
                         event.preventDefault();
                         if (this.props.isMobile) {
                             this.toggleMobileMenu();
                         }
                         this.props.controller.setClient(event, client.clientId, client.name);
                     };
-                    dropdown.push(<a key={index} href={"#" + client.name} className="navbar-item" onClick={onClick}
-                                     title={`(${client.clientId}) ${client.name}`}>{client.name}</a>)
+                    const domElement = <a key={index} href={"#" + client.name} className={"navbar-item"} onClick={ fnSelectCompany }
+                                          title={`(${client.clientId}) ${client.name}`}>{client.name}</a>;
+                    dropdown.push(domElement);
                 }
             });
         }
@@ -91,7 +89,7 @@ export default class Header extends React.Component {
             <p className={"notification is-danger is-paddingless"}>
                 <small>carregando</small>
                 <span className={"icon"}>
-                    <i className={"fa fa-cog fa-spin"}></i>
+                    <i className={"fas fa-cog fa-spin"}></i>
                 </span>
             </p>
         </div>;
@@ -101,7 +99,7 @@ export default class Header extends React.Component {
             <p className="control">
                 <a onClick={this.doLogout} className={(this.props.userId) ? "button is-danger" : "button is-success"}>
                 <span className="icon">
-                    <i className="fa fa-unlock"></i>
+                    <i className="fas fa-unlock"></i>
                 </span>
                     <span>{(this.props.userId) ? this.props.userName + " (Sair)" : "Entrar"}</span>
                 </a>
@@ -118,7 +116,7 @@ export default class Header extends React.Component {
             <p className="control">
                 <a onClick={fnManageUsers} className="button">
                     <span className="icon">
-                        <i className="fa fa-users"></i>
+                        <i className="fas fa-users"></i>
                     </span>
                 </a>
             </p>
@@ -131,7 +129,7 @@ export default class Header extends React.Component {
                     <p className="control">
                         <span className={(this.props.clientId) ? "button is-info" : "button is-warning"}>
                             <span className="icon">
-                                <i className="fa fa-bus"></i>
+                                <i className="fas fa-bus"></i>
                             </span>
                             <span>{this.props.clientName}</span>
                         </span>
@@ -164,7 +162,7 @@ export default class Header extends React.Component {
                     <a onClick={this.doLogin}
                        className={(this.props.userId) ? "button is-danger" : "button is-success"}>
                     <span className="icon">
-                        <i className="fa fa-lock"></i>
+                        <i className="fas fa-lock"></i>
                     </span>
                         <span>{(this.props.userId) ? this.props.userName + " (Sair)" : "Entrar"}</span>
                     </a>

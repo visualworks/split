@@ -11,8 +11,10 @@ export default class Content extends React.Component {
     }
 
     render() {
-        let filterControls = <div id="overlayer-map" className={"box container is-widescreen"}>
-            <FilterControls controller={this.props.controller}
+        const isLoggedUser = this.props.controller.component.state.userName && this.props.controller.component.state.clientId > 0;
+        const overlayVisible = isLoggedUser ? null : "is-invisible";
+        let filterControls = <div id="overlayer-map" className={`${overlayVisible} box is-widescreen`}>
+            <FilterControls controller={this.props.controller} isMobile={this.props.isMobile}
                             clientId={this.props.clientId} linesList={this.props.linesList}
                             selectedLineId={this.props.selectedLineId} routesList={this.props.routesList}
                             selectedRouteId={this.props.selectedRouteId}/>

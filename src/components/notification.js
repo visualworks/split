@@ -7,7 +7,7 @@ export default class Notification extends React.Component {
 
     render() {
         const footer = (
-            <footer>
+            <footer className={"notification-footer"}>
                 <div className={"container has-text-centered"}>
                     <div className={`notification ${this.props.notification.type}`}>
                         <button className={"delete"}

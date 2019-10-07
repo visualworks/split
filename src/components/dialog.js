@@ -37,10 +37,10 @@ export default class Dialog extends React.Component {
                             <p className="control has-icons-left has-icons-right">
                                 <input className="input" type="text" name="user" value="portaljal" readOnly="true" ref={ (input) => { this.user = input; } } />
                                 <span className="icon is-small is-left">
-                                    <i className="fa fa-user"></i>
+                                    <i className="fas fa-user"></i>
                                 </span>
                                 <span className="icon is-small is-right">
-                                    <i className="fa fa-check"></i>
+                                    <i className="fas fa-check"></i>
                                 </span>
                             </p>
                         </div>
@@ -48,7 +48,7 @@ export default class Dialog extends React.Component {
                             <p className="control has-icons-left">
                                 <input className="input" type="password" name="passwd" placeholder="Nova Senha" ref={ (input) => { this.passwd = input; } } />
                                 <span className="icon is-small is-left">
-                                    <i className="fa fa-lock"></i>
+                                    <i className="fas fa-lock"></i>
                                 </span>
                             </p>
                         </div>
@@ -56,7 +56,7 @@ export default class Dialog extends React.Component {
                             <p className="control has-icons-left">
                                 <input className="input" type="password" name="rePasswd" placeholder="Confirme Nova Senha" ref={ (input) => { this.rePasswd = input; } } />
                                 <span className="icon is-small is-left">
-                                    <i className="fa fa-lock"></i>
+                                    <i className="fas fa-lock"></i>
                                 </span>
                             </p>
                         </div>
@@ -65,7 +65,7 @@ export default class Dialog extends React.Component {
                             <div className="control has-icons-left">
                                 <input className="input" type="password" name="adminPasswd" placeholder="Sua senha" ref={ (input) => { this.adminPasswd = input; } } />
                                 <span className="icon is-small is-left">
-                                    <i className="fa fa-lock"></i>
+                                    <i className="fas fa-lock"></i>
                                 </span>
                             </div>
                         </div>

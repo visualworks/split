@@ -11,7 +11,7 @@ export default class Marker extends React.Component {
                     className={this.props.buttonStyle} title={this.props.title}
                     onClick={this.props.onClick}>
             <span className="icon">
-                <i className={`fa ${this.props.iconStyle}`}></i>
+                <i className={`fas ${this.props.iconStyle}`}></i>
             </span>
                 <span className={this.props.descriptionStyle}>{this.props.description}</span>
             </button>

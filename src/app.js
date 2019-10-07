@@ -643,7 +643,7 @@ export default class App {
                 if (isNewSearch) {
                     if (this.map.getLayers()) {
                         this.map.getLayers().forEach((layer) => {
-                            if (layer.getType() === "VECTOR") {
+                            if (layer.hasOwnProperty("getType") && layer.getType() === "VECTOR") {
                                 this.map.removeLayer(layer);
                             }
                         });
