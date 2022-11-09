@@ -58,6 +58,19 @@ export default class App {
         return isMobile || isTablet;
     }
 
+    static fetchOptions() {
+        return {
+            method: "GET",
+            mode: "cors",
+            headers: {
+                "Content-Type": "application/json"
+                "Access-Control-Allow-Headers": "Content-Type",
+                "Access-Control-Allow-Origin": "https://api.portaljal.com.br",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            }
+        };
+    }
+
     constructor(component) {
         this.component = component;
         this.map = new Map({
@@ -93,7 +106,7 @@ export default class App {
             vehiclesGarageList: vehiclesGarageList,
             showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
         });
-        fetch(wsVehiclesGarage).then((response) => {
+        fetch(wsVehiclesGarage, App.fetchOptions()).then((response) => {
             if (response.ok) {
                 return response.json();
             }
@@ -140,7 +153,7 @@ export default class App {
         this.component.setState({
             showLoading: this.component.state.showLoading ? "" : this.component.state.showLoading
         });
-        fetch(wsClientPerUser).then((response) => {
+        fetch(wsClientPerUser, App.fetchOptions()).then((response) => {
             if (response.ok) {
                 return response.json();
             }
@@ -176,7 +189,7 @@ export default class App {
             });
             const wsCollection = this.component.state.CONST_MAPPINGS.API_LINES_PER_CLIENT;
             const wsLinesPerClient = this.getAPIUrl(`${wsCollection}?configId=2&companyId=${clientId}`);
-            fetch(wsLinesPerClient).then((response) => {
+            fetch(wsLinesPerClient, App.fetchOptions()).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
@@ -227,7 +240,7 @@ export default class App {
         if (routeId) {
             const wsCollection = this.component.state.CONST_MAPPINGS.API_REFERENCE_POINTS;
             const wsReferencePoints = this.getAPIUrl(`${wsCollection}?configId=2&directionId=${routeId}`);
-            fetch(wsReferencePoints).then((response) => {
+            fetch(wsReferencePoints, App.fetchOptions()).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
@@ -276,7 +289,7 @@ export default class App {
         if (lineId && routeId) {
             const wsCollection = this.component.state.CONST_MAPPINGS.API_VEHICLES_ROUTE;
             const wsVehiclesInRoute = this.getAPIUrl(`${wsCollection}?configId=2&routeId=${lineId}&directionId=${routeId}`);
-            fetch(wsVehiclesInRoute).then((response) => {
+            fetch(wsVehiclesInRoute, App.fetchOptions()).then((response) => {
                 if (response.ok) {
                     return response.json();
                 }
